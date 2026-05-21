@@ -1,5 +1,6 @@
 import VideoCard from "@/components/VideoCard";
 import type { VideoRecord } from "@/lib/videos";
+import BannerAd from "@/components/BannerAd";
 
 interface SimilarVideosProps {
   videos: VideoRecord[];
