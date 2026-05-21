@@ -7,6 +7,7 @@ interface SimilarVideosProps {
 
 const SimilarVideos = ({ videos }: SimilarVideosProps) => {
   return (
+    <BannerAd zoneId="5929334" />
     <section className="container py-10 sm:py-16">
       <h2 className="text-center text-3xl sm:text-5xl font-bold text-white text-glow tracking-tight uppercase">
         Similar Videos
