@@ -24,7 +24,7 @@ const VideoPage = () => {
     enabled: Boolean(video?.id),
   });
 
-  const title = video?.title ?? (slug || "video").replace(/-/g, " ");
+  const title = video?.title ?? ("video").replace(/-/g, " ");
   const related = similarVideos.filter((item) => item.slug !== video?.slug).slice(0, 6);
 
   return (
@@ -42,7 +42,7 @@ const VideoPage = () => {
             <span className="inline-flex items-center gap-1.5">
               <Star className="h-4 w-4 text-primary fill-primary" /> {video?.rating ?? 0}
             </span>
-            <span>{video ? new Date(video.created_at).toLocaleDateString() : "Pending"}</span>
+            <span>{video ? new Date(video.created_at).toLocaleDateString() : ""}</span>
           </div>
         </section>
 
