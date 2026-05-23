@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { Pause, Volume2, VolumeX, Settings, Maximize } from "lucide-react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { Maximize } from "lucide-react";
 import { PlayIcon, Cog6ToothIcon, SpeakerWaveIcon, SpeakerXMarkIcon, PauseIcon } from "@heroicons/react/24/solid";
 import Hls from "hls.js";
 import { Slider } from "@/components/ui/slider";
@@ -23,6 +23,8 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
   const containerRef = useRef<HTMLDivElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const firstPlayFiredRef = useRef(false);
+  const wasPlayingRef = useRef(false); // track play state before drag
+
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
   const [current, setCurrent] = useState(0);
@@ -33,7 +35,13 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
   const [currentLevel, setCurrentLevel] = useState<number>(-1);
   const [qualityOpen, setQualityOpen] = useState(false);
 
-  // Reload video when URL changes (HLS-aware)
+  // ── Scrubbing state ────────────────────────────────────────────────────────
+  // While the user is dragging we show scrubPosition instead of current time,
+  // but we do NOT seek the video on every drag tick — only on release.
+  const [isScrubbing, setIsScrubbing] = useState(false);
+  const [scrubPosition, setScrubPosition] = useState(0); // 0-100
+
+  // ── HLS / source setup ────────────────────────────────────────────────────
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
@@ -44,9 +52,9 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
     setDuration(0);
     setLevels([]);
     setCurrentLevel(-1);
+    setIsScrubbing(false);
     firstPlayFiredRef.current = false;
 
-    // Cleanup any prior hls instance
     if (hlsRef.current) {
       hlsRef.current.destroy();
       hlsRef.current = null;
@@ -78,37 +86,27 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
       });
       hls.on(Hls.Events.ERROR, (_e, data) => {
         if (!data.fatal) return;
-        switch (data.type) {
-          case Hls.ErrorTypes.NETWORK_ERROR:
-            hls.startLoad();
-            break;
-          case Hls.ErrorTypes.MEDIA_ERROR:
-            hls.recoverMediaError();
-            break;
-          default:
-            hls.destroy();
-            hlsRef.current = null;
-        }
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+        else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+        else { hls.destroy(); hlsRef.current = null; }
       });
     } else if (isHls && v.canPlayType("application/vnd.apple.mpeg-url")) {
       v.src = videoUrl;
     } else {
-      // Legacy mp4 / other: rely on <source> child
       v.load();
     }
 
     return () => {
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
+      if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; }
     };
   }, [videoUrl]);
 
+  // ── Native video event listeners ──────────────────────────────────────────
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
-    const onTime = () => setCurrent(v.currentTime);
+
+    const onTime = () => { if (!isScrubbing) setCurrent(v.currentTime); };
     const onMeta = () => setDuration(v.duration || 0);
     const onPlay = () => {
       setPlaying(true);
@@ -120,6 +118,7 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
     };
     const onPause = () => setPlaying(false);
     const onEnd = () => { setPlaying(false); setStarted(false); };
+
     v.addEventListener("timeupdate", onTime);
     v.addEventListener("loadedmetadata", onMeta);
     v.addEventListener("play", onPlay);
@@ -132,20 +131,36 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
       v.removeEventListener("pause", onPause);
       v.removeEventListener("ended", onEnd);
     };
-  }, [onFirstPlay]);
+  }, [onFirstPlay, isScrubbing]);
 
+  // ── Controls ──────────────────────────────────────────────────────────────
   const toggle = () => {
     const v = ref.current;
     if (!v) return;
-    if (v.paused) v.play();
-    else v.pause();
+    if (v.paused) v.play(); else v.pause();
   };
 
-  const seek = (val: number[]) => {
+  // Called on every drag tick — only moves the scrub indicator, NOT the video
+  const onScrubChange = useCallback((val: number[]) => {
+    if (!isScrubbing) {
+      setIsScrubbing(true);
+      wasPlayingRef.current = !ref.current?.paused;
+      ref.current?.pause(); // pause while scrubbing to avoid buffering fights
+    }
+    setScrubPosition(val[0]);
+  }, [isScrubbing]);
+
+  // Called only when user releases the slider — seek happens here once
+  const onScrubCommit = useCallback((val: number[]) => {
     const v = ref.current;
-    if (!v || !duration) return;
-    v.currentTime = (val[0] / 100) * duration;
-  };
+    if (v && duration) {
+      v.currentTime = (val[0] / 100) * duration;
+      setCurrent(v.currentTime);
+    }
+    setIsScrubbing(false);
+    // Resume if video was playing before scrub
+    if (wasPlayingRef.current) ref.current?.play();
+  }, [duration]);
 
   const onVol = (val: number[]) => {
     const v = ref.current;
@@ -171,19 +186,23 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
 
   const setQuality = (idx: number) => {
     const hls = hlsRef.current;
-    if (hls) {
-      hls.currentLevel = idx;
-      setCurrentLevel(idx);
-    }
+    if (hls) { hls.currentLevel = idx; setCurrentLevel(idx); }
     setQualityOpen(false);
   };
 
-  const activeHeight =
-    currentLevel >= 0 ? levels.find((l) => l.index === currentLevel)?.height ?? 0 : 0;
+  // ── Derived display values ─────────────────────────────────────────────────
+  // During a drag we show the scrub position; otherwise show real playback time
+  const displayProgress = isScrubbing
+    ? scrubPosition
+    : duration > 0 ? (current / duration) * 100 : 0;
+
+  const displayTime = isScrubbing
+    ? (scrubPosition / 100) * duration
+    : current;
+
+  const activeHeight = currentLevel >= 0 ? levels.find((l) => l.index === currentLevel)?.height ?? 0 : 0;
   const qualityLabel = currentLevel === -1 ? "Auto" : `${activeHeight}p`;
   const showQuality = levels.length > 1;
-
-  const progress = duration > 0 ? (current / duration) * 100 : 0;
 
   return (
     <div ref={containerRef} className="relative w-full aspect-video bg-black rounded-lg overflow-hidden group btn-glow-soft">
@@ -201,18 +220,10 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
         ) : null}
       </video>
 
-      {!playing && (
-        <button
-          onClick={toggle}
-          aria-label="Play"
-          className="absolute inset-0 grid place-items-center"
-        >
+      {!playing && !isScrubbing && (
+        <button onClick={toggle} aria-label="Play" className="absolute inset-0 grid place-items-center">
           {!started && posterUrl && (
-            <img
-              src={posterUrl}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+            <img src={posterUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
           )}
           <span className="relative z-10 h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20 rounded-full bg-gradient-purple grid place-items-center">
             <PlayIcon className="h-5 w-5 sm:h-7 sm:w-7 md:h-9 md:w-9 text-white fill-white ml-1" />
@@ -222,81 +233,71 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
 
       {/* Controls */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 sm:p-4">
+        {/* Progress slider — seek only on commit (mouse/touch release) */}
         <Slider
-          value={[progress]}
-          onValueChange={seek}
+          value={[displayProgress]}
+          onValueChange={onScrubChange}
+          onValueCommit={onScrubCommit}
           max={100}
           step={0.1}
           className="mb-2"
         />
+
         <div className="flex items-center gap-2 sm:gap-3 text-white text-xs sm:text-sm">
           <button onClick={toggle} aria-label={playing ? "Pause" : "Play"}>
-            {playing ? <PauseIcon className="h-5 w-5" /> : <PlayIcon className="h-5 w-5" />}
+            {playing && !isScrubbing
+              ? <PauseIcon className="h-5 w-5" />
+              : <PlayIcon className="h-5 w-5" />}
           </button>
+
           <span className="font-mono whitespace-nowrap">
-            {formatTime(current)} / {formatTime(duration)}
+            {formatTime(displayTime)} / {formatTime(duration)}
           </span>
+
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
             <button onClick={toggleMute} aria-label="Mute">
-              {muted || volume === 0 ? <SpeakerXMarkIcon className="h-5 w-5" /> : <SpeakerWaveIcon className="h-5 w-5" />}
+              {muted || volume === 0
+                ? <SpeakerXMarkIcon className="h-5 w-5" />
+                : <SpeakerWaveIcon className="h-5 w-5" />}
             </button>
+
             <div className="hidden sm:block w-20">
-              <Slider value={[muted ? 0 : volume * 100]} onValueChange={onVol} max={100} step={1} />
+              <Slider
+                value={[muted ? 0 : volume * 100]}
+                onValueChange={onVol}
+                max={100}
+                step={1}
+              />
             </div>
+
             {showQuality ? (
               <Popover open={qualityOpen} onOpenChange={setQualityOpen}>
                 <PopoverTrigger asChild>
-                  <button
-                    aria-label="Quality settings"
-                    className="inline-flex items-center gap-1 hover:text-primary transition-colors"
-                  >
+                  <button aria-label="Quality settings" className="inline-flex items-center gap-1 hover:text-primary transition-colors">
                     <Cog6ToothIcon className="h-5 w-5" />
                     <span className="hidden sm:inline text-xs font-bold">{qualityLabel}</span>
                   </button>
                 </PopoverTrigger>
-                <PopoverContent
-                  side="top"
-                  align="end"
-                  sideOffset={8}
-                  className="w-36 p-1 bg-card border-border"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setQuality(-1)}
-                    className={`flex w-full items-center justify-between rounded px-3 py-2 text-sm font-bold transition ${
-                      currentLevel === -1
-                        ? "bg-gradient-purple text-primary-foreground"
-                        : "text-foreground hover:bg-secondary"
-                    }`}
-                  >
+                <PopoverContent side="top" align="end" sideOffset={8} className="w-36 p-1 bg-card border-border">
+                  <button type="button" onClick={() => setQuality(-1)}
+                    className={`flex w-full items-center justify-between rounded px-3 py-2 text-sm font-bold transition ${currentLevel === -1 ? "bg-gradient-purple text-primary-foreground" : "text-foreground hover:bg-secondary"}`}>
                     <span>Auto</span>
                   </button>
                   {levels.map((l) => (
-                    <button
-                      key={l.index}
-                      type="button"
-                      onClick={() => setQuality(l.index)}
-                      className={`flex w-full items-center justify-between rounded px-3 py-2 text-sm font-bold transition ${
-                        currentLevel === l.index
-                          ? "bg-gradient-purple text-primary-foreground"
-                          : "text-foreground hover:bg-secondary"
-                      }`}
-                    >
+                    <button key={l.index} type="button" onClick={() => setQuality(l.index)}
+                      className={`flex w-full items-center justify-between rounded px-3 py-2 text-sm font-bold transition ${currentLevel === l.index ? "bg-gradient-purple text-primary-foreground" : "text-foreground hover:bg-secondary"}`}>
                       <span>{l.height}p</span>
                       {l.height >= 720 && (
-                        <span className="ml-2 rounded bg-primary/80 px-1.5 py-0.5 text-[10px] font-bold uppercase text-primary-foreground">
-                          HD
-                        </span>
+                        <span className="ml-2 rounded bg-primary/80 px-1.5 py-0.5 text-[10px] font-bold uppercase text-primary-foreground">HD</span>
                       )}
                     </button>
                   ))}
                 </PopoverContent>
               </Popover>
             ) : (
-              <button aria-label="Settings">
-                <Cog6ToothIcon className="h-5 w-5" />
-              </button>
+              <button aria-label="Settings"><Cog6ToothIcon className="h-5 w-5" /></button>
             )}
+
             <button onClick={fullscreen} aria-label="Fullscreen">
               <Maximize className="h-5 w-5" />
             </button>
