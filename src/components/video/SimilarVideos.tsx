@@ -10,7 +10,7 @@ const SimilarVideos = ({ videos }: SimilarVideosProps) => {
   return (
     <section className="container py-10 sm:py-16">
       <BannerAd zoneId="5929334" />
-      <h2 className="text-center text-3xl sm:text-5xl font-bold text-white text-glow tracking-tight uppercase">
+      <h2 className="text-center text-3xl sm:text-5xl font-bold text-white tracking-tight uppercase">
         Similar Videos
       </h2>
       <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
