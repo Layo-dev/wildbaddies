@@ -14,10 +14,11 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import DmcaPage from "./pages/DmcaPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
 import Compliance2257Page from "./pages/Compliance2257Page";
-import JuicyPopunder from "./components/JuicyPopunder.tsx";
+//import JuicyPopunder from "./components/JuicyPopunder.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
 import SearchPage from "./pages/SearchPage.tsx";
 import { AuthProvider } from "./context/AuthContext";
+import AdsterraPopunder from "./components/AdsterraPopunder.tsx";
 
 
 const queryClient = new QueryClient();
@@ -30,7 +31,8 @@ const App = () => (
         <Sonner />
         <AgeGate />
         <BrowserRouter>
-        <JuicyPopunder />
+        <AdsterraPopunder />
+        {/*<JuicyPopunder />*/}
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/video/:slug" element={<VideoPage />} />
