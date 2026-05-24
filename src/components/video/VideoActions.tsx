@@ -1,12 +1,15 @@
 import { Download, Share2, Plus, Star, ThumbsUp, ThumbsDown, ChevronDown } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const VideoActions = () => {
   return (
     <div className="mt-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
       <div className="flex flex-wrap gap-3">
+        <Link to={`https://www.effectivecpmnetwork.com/c3a0rquwhk?key=790012fb156a548d2a45ba0daf15407e`} target="_blank" rel="noopener noreferrer">
         <button className="inline-flex items-center gap-2 rounded-full border border-primary/60 bg-secondary/40 px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-all">
           <Download className="h-4 w-4" /> Download
         </button>
+        </Link>
         <button className="inline-flex items-center gap-2 rounded-full border border-primary/60 bg-secondary/40 px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary/20 hover:border-primary transition-all">
           <Share2 className="h-4 w-4" /> Share
         </button>
