@@ -9,11 +9,7 @@ interface SimilarVideosProps {
 const SimilarVideos = ({ videos }: SimilarVideosProps) => {
   return (
     <section className="container py-10 sm:py-16">
-      <AdsterraNativeBanner
-        containerId="container-xxxxxxxx"
-        scriptSrc="https://plxxxxxxxx.effectivecpmnetwork.com/xxxxxxxx/invoke.js"
-        className="hidden md:flex my-4"
-      />
+      <AdsterraNativeBanner/>
       {/*<BannerAd zoneId="5929334" />*/}
       <h2 className="text-center text-3xl sm:text-5xl font-bold text-white tracking-tight uppercase">
         Similar Videos

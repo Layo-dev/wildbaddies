@@ -1,37 +1,33 @@
 import { useEffect } from "react";
 
-interface AdsterraNativeBannerProps {
-  containerId: string;
-  scriptSrc: string;
-  className?: string;
+declare global {
+  interface Window {
+    adsterraNativeLoaded?: boolean;
+  }
 }
 
-export default function AdsterraNativeBanner({
-  containerId,
-  scriptSrc,
-  className = "",
-}: AdsterraNativeBannerProps) {
+export default function AdsterraNativeBanner() {
   useEffect(() => {
-    // Prevent duplicate script
-    if (document.querySelector(`script[src="${scriptSrc}"]`)) {
-      return;
-    }
+    // Prevent duplicate loading
+    if (window.adsterraNativeLoaded) return;
 
     const script = document.createElement("script");
 
-    script.src = scriptSrc;
+    script.src =
+      "https://pl29550404.effectivecpmnetwork.com/1a9e762d8cae91d58713f540a8329fc5/invoke.js";
+
     script.async = true;
     script.setAttribute("data-cfasync", "false");
 
     document.body.appendChild(script);
 
-    return () => {};
-  }, [scriptSrc]);
+    window.adsterraNativeLoaded = true;
+  }, []);
 
   return (
     <div
-      id={containerId}
-      className={`w-full flex justify-center overflow-hidden ${className}`}
+      id="container-1a9e762d8cae91d58713f540a8329fc5"
+      className="w-full flex justify-center overflow-hidden"
     />
   );
 }
