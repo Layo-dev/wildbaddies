@@ -41,6 +41,36 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
   const [isScrubbing, setIsScrubbing] = useState(false);
   const [scrubPosition, setScrubPosition] = useState(0); // 0-100
 
+  // ── Controls visibility ───────────────────────────────────────────────────
+  const [showControls, setShowControls] = useState(true);
+  const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearInactivityTimer = useCallback(() => {
+    if (inactivityTimerRef.current) {
+      clearTimeout(inactivityTimerRef.current);
+      inactivityTimerRef.current = null;
+    }
+  }, []);
+
+  const resetInactivityTimer = useCallback(() => {
+    setShowControls(true);
+    clearInactivityTimer();
+    if (playing && !isScrubbing) {
+      inactivityTimerRef.current = setTimeout(() => setShowControls(false), 3000);
+    }
+  }, [playing, isScrubbing, clearInactivityTimer]);
+
+  // Re-evaluate when play state or scrubbing changes
+  useEffect(() => {
+    if (!playing || isScrubbing) {
+      clearInactivityTimer();
+      setShowControls(true);
+    } else {
+      resetInactivityTimer();
+    }
+    return () => clearInactivityTimer();
+  }, [playing, isScrubbing, resetInactivityTimer, clearInactivityTimer]);
+
   // ── HLS / source setup ────────────────────────────────────────────────────
   useEffect(() => {
     const v = ref.current;
@@ -205,12 +235,17 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
   const showQuality = levels.length > 1;
 
   return (
-    <div ref={containerRef} className="relative w-full aspect-video bg-black rounded-lg overflow-hidden group btn-glow-soft">
+    <div
+      ref={containerRef}
+      onMouseMove={resetInactivityTimer}
+      onTouchStart={resetInactivityTimer}
+      className={`relative w-full aspect-video bg-black rounded-lg overflow-hidden group btn-glow-soft ${playing && !showControls ? "cursor-none" : ""}`}
+    >
       <video
         ref={ref}
         poster={started ? "" : (posterUrl ?? undefined)}
         className="w-full h-full object-contain bg-black"
-        onClick={toggle}
+        onClick={() => { toggle(); resetInactivityTimer(); }}
         playsInline
         controls={false}
         preload="metadata"
@@ -232,7 +267,9 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
       )}
 
       {/* Controls */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 sm:p-4">
+      <div
+        className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 sm:p-4 transition-opacity duration-300 ${showControls || !playing || isScrubbing ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+      >
         {/* Progress slider — seek only on commit (mouse/touch release) */}
         <Slider
           value={[displayProgress]}
