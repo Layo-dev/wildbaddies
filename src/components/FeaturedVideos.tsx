@@ -7,6 +7,7 @@ import { listCategories, type CategoryRecord } from "@/lib/categories";
 import { getVideosByCategory } from "@/lib/videos";
 //import BannerAd from "@/components/BannerAd";
 import AdsterraNativeBanner from "@/components/AdsterraNativeBanner";
+import { Fragment } from "react";
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Video {
   id: string;
@@ -288,16 +289,23 @@ const FeaturedVideos = () => {
         {!isLoading && !isError && videos.length === 0 && (
           <p className="text-muted-foreground col-span-full">No videos found.</p>
         )}
-        {videos.map((video) => (
-          <VideoCard
-            key={video.id}
-            slug={video.slug}
-            title={video.title}
-            durationSeconds={video.duration_seconds}
-            views={video.views}
-            rating={video.rating}
-            thumbnailUrl={video.thumbnail_url}
-          />
+       {videos.map((video, index) => (
+          <Fragment key={video.id}>
+            <VideoCard
+              slug={video.slug}
+              title={video.title}
+              durationSeconds={video.duration_seconds}
+              views={video.views}
+              rating={video.rating}
+              thumbnailUrl={video.thumbnail_url}
+            />
+
+            {(index + 1) % 8 === 0 && (
+              <div className="block md:hidden">
+                <AdsterraNativeBanner />
+              </div>
+            )}
+          </Fragment>
         ))}
       </div>
 
