@@ -1,7 +1,7 @@
 import VideoCard from "@/components/VideoCard";
 import type { VideoRecord } from "@/lib/videos";
-import BannerAd from "@/components/BannerAd";
-//import AdsterraNativeBanner from "@/components/AdsterraNativeBanner";
+//import BannerAd from "@/components/BannerAd";
+import AdsterraNativeBanner from "@/components/AdsterraNativeBanner";
 interface SimilarVideosProps {
   videos: VideoRecord[];
 }
@@ -9,8 +9,10 @@ interface SimilarVideosProps {
 const SimilarVideos = ({ videos }: SimilarVideosProps) => {
   return (
     <section className="container py-10 sm:py-16">
-      {/*<AdsterraNativeBanner/>*/}
-      <BannerAd zoneId="5929334" />
+      <div className="block md:hidden">
+      <AdsterraNativeBanner/>
+      </div>
+      {/*<BannerAd zoneId="5929334" />*/}
       <h2 className="text-center text-3xl sm:text-5xl font-bold text-white tracking-tight uppercase">
         Similar Videos
       </h2>
