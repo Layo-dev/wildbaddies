@@ -23,7 +23,6 @@ export default function AdsterraDesktopNativeBanner() {
   return (
     <div
       id="container-bdec6466d7eb31282a8d4ea1c339917d"
-      className="hidden md:block"
     />
   );
 }
