@@ -7,6 +7,7 @@ import { listCategories, type CategoryRecord } from "@/lib/categories";
 import { getVideosByCategory } from "@/lib/videos";
 //import BannerAd from "@/components/BannerAd";
 import AdsterraNativeBanner from "@/components/AdsterraNativeBanner";
+import AdsterraNativeBanner2 from "@/components/AdsterraNativeBanner2";
 import { Fragment } from "react";
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Video {
@@ -186,7 +187,12 @@ const FeaturedVideos = () => {
       {/*<div className=" mb-4 mx-auto flex h-[160px] w-full max-w-sm items-center justify-center rounded-md border border-dashed border-border text-xs uppercase tracking-widest text-muted-foreground">*/}
         {/*Sponsored · Ad 300×250*/}
         {/*<BannerAd zoneId="5929334" />*/}
-        <AdsterraNativeBanner />
+        <div className="hidden md:block my-4">
+          <AdsterraNativeBanner2 />
+        </div>
+        <div className="block md:hidden">
+          <AdsterraNativeBanner />
+        </div>
       {/*</div>*/}
       <h2 className="text-center text-4xl sm:text-6xl font-bold text-white tracking-tight">
         FEATURED VIDEOS
