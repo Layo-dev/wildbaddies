@@ -187,7 +187,7 @@ const FeaturedVideos = () => {
       {/*<div className=" mb-4 mx-auto flex h-[160px] w-full max-w-sm items-center justify-center rounded-md border border-dashed border-border text-xs uppercase tracking-widest text-muted-foreground">*/}
         {/*Sponsored · Ad 300×250*/}
         {/*<BannerAd zoneId="5929334" />*/}
-        <div className="hidden md:block my-4">
+        <div className="hidden md:block mb-4">
           <AdsterraNativeBanner2 />
         </div>
         <div className="block md:hidden">
