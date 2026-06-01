@@ -11,7 +11,7 @@ const SimilarVideos = ({ videos }: SimilarVideosProps) => {
   return (
     <section className="container py-10 sm:py-16">
         <AdsterraNativeBanner2/>
-      <div className="block md:hidden">
+      <div>
       <AdsterraNativeBanner/>
       </div>
       {/*<BannerAd zoneId="5929334" />*/}
