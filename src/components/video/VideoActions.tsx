@@ -13,9 +13,9 @@ const VideoActions = () => {
         <button className="inline-flex items-center gap-2 rounded-full border border-primary/60 bg-secondary/40 px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary/20 hover:border-primary transition-all">
           <Share2 className="h-4 w-4" /> Share
         </button>
-        <button className="inline-flex items-center gap-2 rounded-full border border-primary/60 bg-secondary/40 px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary/20 hover:border-primary transition-all">
+        {/*<button className="inline-flex items-center gap-2 rounded-full border border-primary/60 bg-secondary/40 px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary/20 hover:border-primary transition-all">
           <Plus className="h-4 w-4" /> Add To <ChevronDown className="h-4 w-4" />
-        </button>
+        </button>*/}
       </div>
 
       <div className="flex items-center gap-6">
