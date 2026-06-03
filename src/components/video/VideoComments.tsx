@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { RefreshCw } from "lucide-react";
+import ExoClickOutstream from "../ExoClickOutstream";
 
 const VideoComments = () => {
   const [comment, setComment] = useState("");
@@ -11,6 +12,7 @@ const VideoComments = () => {
 
   return (
     <section className="mt-12 border-t border-border pt-8">
+      <ExoClickOutstream />
       <h2 className="text-2xl sm:text-3xl font-bold text-white uppercase mb-6">Comments (0)</h2>
 
       <div className="space-y-4 max-w-3xl">
