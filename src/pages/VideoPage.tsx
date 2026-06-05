@@ -72,16 +72,20 @@ const VideoPage = () => {
           {isLoading ? (
             <Skeleton className="w-full aspect-video rounded-lg" />
           ) : video ? (
-            <VideoPlayer
-              videoUrl={video.playback_url}
-              posterUrl={video.thumbnail_url}
-              onFirstPlay={() => incrementVideoView(video.id)}
-            />
+            <div className="mt-4 -mx-8 sm:mx-0">
+              <VideoPlayer
+                videoUrl={video.playback_url}
+                posterUrl={video.thumbnail_url}
+                onFirstPlay={() => incrementVideoView(video.id)}
+              />
+            </div>
           ) : null}
 
-          <VideoActions />
-          <VideoMeta videoId={video?.id} />
-          <VideoComments />
+          <div className="mt-6">
+            <VideoActions />
+            <VideoMeta videoId={video?.id} />
+            <VideoComments />
+          </div>
         </section>
 
         {related.length > 0 && <SimilarVideos videos={related} />}
