@@ -198,38 +198,31 @@ const FeaturedVideos = () => {
         FEATURED VIDEOS
       </h2>
 
-      {/* Category chips */}
-      <div className="mt-8 flex flex-wrap justify-center gap-2 max-w-5xl mx-auto">
-        {catsLoading
-          ? Array.from({ length: 8 }).map((_, i) => (
-              <Skeleton key={i} className="h-8 w-24 rounded-full" />
-            ))
-          : visibleChips.map((c) => {
-              const active = selectedCategory === c.slug;
-              return (
-                <button
-                  key={c.slug}
-                  type="button"
-                  onClick={() => handleCategoryChange(c.slug)}
-                  className={
-                    active
-                      ? "chip bg-primary text-white border-primary"
-                      : "chip"
-                  }
-                >
-                  {c.name}
-                </button>
-              );
-            })}
-        {!catsLoading && canExpand && (
-          <button
-            type="button"
-            onClick={() => setExpanded((v) => !v)}
-            className="chip border-primary text-primary"
-          >
-            {expanded ? "Hide Categories" : "Show All Categories"}
-          </button>
-        )}
+      {/* Category chips — horizontal scrolling row */}
+      <div className="mt-8 -mx-4 px-4 overflow-x-auto scrollbar-hide">
+        <div className="flex items-center gap-2 w-max">
+          {catsLoading
+            ? Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} className="h-9 w-24 rounded-full shrink-0" />
+              ))
+            : allChips.map((c) => {
+                const active = selectedCategory === c.slug;
+                return (
+                  <button
+                    key={c.slug}
+                    type="button"
+                    onClick={() => handleCategoryChange(c.slug)}
+                    className={
+                      active
+                        ? "chip shrink-0 bg-foreground text-background border-foreground hover:bg-foreground"
+                        : "chip shrink-0"
+                    }
+                  >
+                    {c.name}
+                  </button>
+                );
+              })}
+        </div>
       </div>
 
       {/* Controls row */}

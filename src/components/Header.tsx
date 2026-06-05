@@ -1,26 +1,55 @@
 import { useState } from "react";
-import { Menu, X, User, Upload } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Menu,
+  User,
+  Upload,
+  Home,
+  LayoutGrid,
+  Search as SearchIcon,
+  Video,
+  Sparkles,
+  Bookmark,
+  Heart,
+  Clock,
+} from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import mascot from "@/assets/baddies-mascot.png";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import AuthModal, { type AuthMode } from "@/components/auth/AuthModal";
 import { useAuth } from "@/context/AuthContext";
 import SearchBox from "@/components/search/SearchBox";
 
-const navItems: { label: string; href: string }[] = [
-  { label: "Videos", href: "/" },
-  { label: "Categories", href: "/categories" },
-  { label: "Tags", href: "#" },
-  { label: "Porn Pics", href: "#" },
+type NavItem = { label: string; href: string; icon: typeof Home; adminOnly?: boolean };
+
+const navItems: NavItem[] = [
+  { label: "Home", href: "/", icon: Home },
+  { label: "Categories", href: "/categories", icon: LayoutGrid },
+  { label: "Search", href: "/search", icon: SearchIcon },
+  { label: "Saved", href: "/profile", icon: Bookmark },
+  { label: "Liked", href: "/profile", icon: Heart },
+  { label: "Check Later", href: "/profile", icon: Clock },
+  { label: "Live Cams", href: "#", icon: Video },
+  { label: "Profile", href: "/profile", icon: User },
+  { label: "Upload", href: "/upload", icon: Upload, adminOnly: true },
+];
+
+const legalLinks = [
+  { label: "Privacy", href: "/privacy-policy" },
+  { label: "DMCA", href: "/dmca" },
+  { label: "Terms", href: "/terms-of-service" },
+  { label: "2257", href: "/2257" },
 ];
 
 const Header = () => {
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [accountOpen, setAccountOpen] = useState(false);
   const { isAuthenticated, user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const openAuth = (mode: AuthMode) => {
     setAuthMode(mode);
@@ -39,19 +68,14 @@ const Header = () => {
     navigate("/");
   };
 
+  const visibleNav = navItems.filter((n) => !n.adminOnly || isAdmin);
+
   return (
-    <header className="relative z-30 bg-gradient-header border-b border-primary/20">
-      <div className="container flex items-center justify-between gap-4 py-4">
+    <header className="relative z-30 bg-background border-b border-foreground/10">
+      <div className="container flex items-center justify-between gap-3 py-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          {/*<img
-            src={mascot}
-            alt="Baddies mascot logo"
-            width={56}
-            height={56}
-            className="h-12 w-12 sm:h-14 sm:w-14 drop-shadow-[0_0_15px_hsl(var(--primary)/0.6)]"
-          /> */}
-          <span className="text-2xl sm:text-3xl font-bold tracking-wide text-white">
+          <span className="text-xl sm:text-2xl font-bold tracking-wide text-foreground">
             WILD BADDIES
           </span>
         </Link>
@@ -60,12 +84,31 @@ const Header = () => {
         <SearchBox className="hidden md:block flex-1 max-w-md" />
 
         {/* Right actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <button
+            aria-label="AI"
+            className="h-10 w-10 grid place-items-center text-foreground hover:text-foreground/70 transition-colors"
+          >
+            <Sparkles className="h-5 w-5" />
+          </button>
+          <button
+            aria-label="Live Cams"
+            className="h-10 w-10 grid place-items-center text-foreground hover:text-foreground/70 transition-colors"
+          >
+            <Video className="h-5 w-5" />
+          </button>
+          <button
+            aria-label="Search"
+            onClick={() => setSearchOpen((v) => !v)}
+            className="md:hidden h-10 w-10 grid place-items-center text-foreground hover:text-foreground/70 transition-colors"
+          >
+            <SearchIcon className="h-5 w-5" />
+          </button>
           <Popover open={accountOpen} onOpenChange={setAccountOpen}>
             <PopoverTrigger asChild>
               <button
                 aria-label="Account"
-                className="h-10 w-10 rounded-full bg-gradient-purple grid place-items-center overflow-hidden transition-shadow hover:opacity-95"
+                className="h-10 w-10 grid place-items-center text-foreground hover:text-foreground/70 transition-colors rounded-full overflow-hidden"
               >
                 {isAuthenticated ? (
                   <img
@@ -74,35 +117,35 @@ const Header = () => {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <User className="h-5 w-5 text-white" />
+                  <User className="h-5 w-5" />
                 )}
               </button>
             </PopoverTrigger>
             <PopoverContent
               align="end"
               sideOffset={8}
-              className="w-44 p-2 bg-card border-border"
+              className="w-44 p-2 bg-popover border border-foreground/15"
             >
               {isAuthenticated ? (
                 <div className="flex flex-col items-stretch text-center">
                   <button
                     type="button"
                     onClick={() => goTo("/profile")}
-                    className="px-3 py-2 rounded-md text-sm font-extrabold tracking-widest uppercase text-white hover:bg-secondary transition-colors"
+                    className="px-3 py-2 rounded-md text-sm font-extrabold tracking-widest uppercase text-foreground hover:bg-foreground/10 transition-colors"
                   >
                     Profile
                   </button>
                   <button
                     type="button"
                     onClick={() => goTo("/profile")}
-                    className="px-3 py-2 rounded-md text-sm font-extrabold tracking-widest uppercase text-white hover:bg-secondary transition-colors"
+                    className="px-3 py-2 rounded-md text-sm font-extrabold tracking-widest uppercase text-foreground hover:bg-foreground/10 transition-colors"
                   >
                     Messages
                   </button>
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="px-3 py-2 rounded-md text-sm font-extrabold tracking-widest uppercase text-white hover:bg-secondary transition-colors"
+                    className="px-3 py-2 rounded-md text-sm font-extrabold tracking-widest uppercase text-foreground hover:bg-foreground/10 transition-colors"
                   >
                     Log Out
                   </button>
@@ -112,14 +155,14 @@ const Header = () => {
                   <button
                     type="button"
                     onClick={() => openAuth("login")}
-                    className="w-full text-left px-3 py-2 rounded-md text-sm font-extrabold tracking-widest uppercase text-white hover:bg-secondary transition-colors"
+                    className="w-full text-left px-3 py-2 rounded-md text-sm font-extrabold tracking-widest uppercase text-foreground hover:bg-foreground/10 transition-colors"
                   >
                     Log In
                   </button>
                   <button
                     type="button"
                     onClick={() => openAuth("signup")}
-                    className="w-full text-left px-3 py-2 rounded-md text-sm font-extrabold tracking-widest uppercase text-white hover:bg-secondary transition-colors"
+                    className="w-full text-left px-3 py-2 rounded-md text-sm font-extrabold tracking-widest uppercase text-foreground hover:bg-foreground/10 transition-colors"
                   >
                     Sign Up
                   </button>
@@ -127,50 +170,89 @@ const Header = () => {
               )}
             </PopoverContent>
           </Popover>
-          <button
-            aria-label="Toggle menu"
-            onClick={() => setOpen((v) => !v)}
-            className="h-10 w-10 grid place-items-center text-white hover:text-primary transition-colors"
-          >
-            {open ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
-          </button>
+
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <button
+                aria-label="Open menu"
+                className="h-10 w-10 grid place-items-center text-foreground hover:text-foreground/70 transition-colors"
+              >
+                <Menu className="h-6 w-6" />
+              </button>
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              className="w-[78vw] max-w-[340px] bg-background border-l border-foreground/10 p-0 text-foreground"
+            >
+              <div className="flex h-full flex-col">
+                {/* Drawer header */}
+                <div className="px-6 pt-6 pb-4">
+                  <Link
+                    to="/"
+                    onClick={() => setOpen(false)}
+                    className="text-2xl font-bold tracking-wide text-foreground"
+                  >
+                    WILD BADDIES
+                  </Link>
+                </div>
+
+                {/* Nav */}
+                <nav className="flex-1 overflow-y-auto px-3 pb-4">
+                  <ul className="flex flex-col gap-1">
+                    {visibleNav.map((item) => {
+                      const Icon = item.icon;
+                      const active = pathname === item.href;
+                      return (
+                        <li key={item.label}>
+                          <Link
+                            to={item.href}
+                            onClick={() => setOpen(false)}
+                            className={`flex h-14 items-center gap-4 rounded-2xl px-4 text-base font-medium transition-colors ${
+                              active
+                                ? "bg-foreground/10 text-foreground"
+                                : "text-foreground/85 hover:bg-foreground/5"
+                            }`}
+                          >
+                            <Icon className="h-5 w-5" />
+                            <span>{item.label}</span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </nav>
+
+                {/* Footer */}
+                <div className="border-t border-foreground/10 px-6 py-5 text-xs uppercase tracking-widest text-foreground/60">
+                  <div className="flex flex-wrap gap-x-4 gap-y-2">
+                    {legalLinks.map((l) => (
+                      <Link
+                        key={l.label}
+                        to={l.href}
+                        onClick={() => setOpen(false)}
+                        className="hover:text-foreground transition-colors"
+                      >
+                        {l.label}
+                      </Link>
+                    ))}
+                  </div>
+                  <p className="mt-4 text-foreground/50 normal-case tracking-normal">
+                    © 2026 Wild Baddies.
+                  </p>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
 
-      {/* Mobile search */}
-      <div className="container md:hidden pb-3">
-        <SearchBox />
-      </div>
-
-      {/* Slide-down menu */}
-      {open && (
-        <nav className="border-t border-primary/20 bg-gradient-header animate-in fade-in slide-in-from-top-2 duration-200">
-          <ul className="container py-6 flex flex-col items-center gap-5 text-white font-bold tracking-wider">
-            {navItems.map((item) => (
-              <li key={item.label}>
-                <Link
-                  to={item.href}
-                  onClick={() => setOpen(false)}
-                  className="hover:text-primary transition-colors"
-                >
-                  {item.label.toUpperCase()}
-                </Link>
-              </li>
-            ))}
-            {isAuthenticated && isAdmin && (
-              <li>
-                <Link
-                  to="/upload"
-                  onClick={() => setOpen(false)}
-                  className="inline-flex items-center gap-2 rounded-full bg-gradient-purple px-8 py-3 uppercase tracking-widest text-white  hover:opacity-95 transition-opacity"
-                >
-                  Upload
-                  <Upload className="h-4 w-4" />
-                </Link>
-              </li>
-            )}
-          </ul>
-        </nav>
+      {/* Mobile expandable search */}
+      {searchOpen && (
+        <div className="container md:hidden pb-3 animate-in fade-in slide-in-from-top-1 duration-150">
+          <div className="glass rounded-full px-4 py-2">
+            <SearchBox />
+          </div>
+        </div>
       )}
 
       <AuthModal

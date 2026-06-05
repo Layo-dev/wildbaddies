@@ -8,44 +8,43 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Baddies dark theme */
+    /* Wild Baddies — Black & Off-White rebrand */
     --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+    --foreground: 60 11% 95%;
 
-    --card: 270 30% 6%;
-    --card-foreground: 0 0% 100%;
+    --card: 0 0% 0%;
+    --card-foreground: 60 11% 95%;
 
-    --popover: 270 30% 6%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 60 11% 95%;
 
-    /* Vibe Purple #AC58E9 */
-    --primary: 280 76% 63%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 273 64% 50%;
-    --primary-deep: 280 73% 35%;
+    --primary: 60 11% 95%;
+    --primary-foreground: 0 0% 0%;
+    --primary-hover: 60 11% 88%;
+    --primary-deep: 60 11% 80%;
 
-    --secondary: 270 30% 12%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 60 11% 95%;
 
-    --muted: 270 15% 14%;
-    --muted-foreground: 0 0% 70%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 60 8% 70%;
 
-    --accent: 280 76% 63%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 60 11% 95%;
+    --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 280 30% 18%;
-    --input: 280 30% 18%;
-    --ring: 280 76% 63%;
+    --border: 60 11% 95%;
+    --input: 0 0% 10%;
+    --ring: 60 11% 95%;
 
     --radius: 0.75rem;
 
-    --gradient-purple: linear-gradient(135deg, hsl(280 76% 63%), hsl(280 73% 35%));
-    --gradient-header: linear-gradient(180deg, hsl(280 60% 18%) 0%, hsl(270 40% 8%) 100%);
-    --shadow-glow: 0 0 20px hsl(280 76% 63% / 0.6);
-    --shadow-glow-soft: 0 0 30px hsl(280 76% 63% / 0.35);
+    --gradient-purple: linear-gradient(135deg, hsl(60 11% 95%), hsl(0 0% 100%));
+    --gradient-header: linear-gradient(180deg, hsl(0 0% 0%) 0%, hsl(0 0% 0%) 100%);
+    --shadow-glow: 0 0 20px hsl(60 11% 95% / 0.25);
+    --shadow-glow-soft: 0 0 30px hsl(60 11% 95% / 0.15);
 
     --sidebar-background: 0 0% 98%;
 
@@ -105,7 +104,7 @@ All colors MUST be HSL.
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border) / 0.15);
   }
 
   body {
@@ -116,7 +115,7 @@ All colors MUST be HSL.
 
 @layer components {
   .text-glow {
-    text-shadow: 0 0 18px hsl(var(--primary) / 0.55);
+    text-shadow: 0 0 18px hsl(var(--foreground) / 0.35);
   }
   .btn-glow {
     box-shadow: var(--shadow-glow);
@@ -131,6 +130,25 @@ All colors MUST be HSL.
     background-image: var(--gradient-header);
   }
   .chip {
-    @apply inline-flex items-center rounded-md border border-primary/40 bg-secondary/40 px-3 py-1.5 text-sm text-foreground/90 transition-colors hover:bg-primary/20 hover:border-primary cursor-pointer;
+    @apply inline-flex items-center whitespace-nowrap rounded-full border border-foreground/15 bg-foreground/5 px-4 py-2 text-sm font-medium text-foreground/90 backdrop-blur-md transition-colors hover:bg-foreground/10 hover:border-foreground/30 cursor-pointer;
+  }
+  .glass {
+    background: hsl(60 11% 95% / 0.06);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid hsl(60 11% 95% / 0.12);
+  }
+  .glass-strong {
+    background: hsl(60 11% 95% / 0.10);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid hsl(60 11% 95% / 0.18);
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
