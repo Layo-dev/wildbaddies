@@ -86,12 +86,6 @@ const Header = () => {
         {/* Right actions */}
         <div className="flex items-center gap-1 sm:gap-2">
           <button
-            aria-label="AI"
-            className="h-10 w-10 grid place-items-center text-foreground hover:text-foreground/70 transition-colors"
-          >
-            <Sparkles className="h-5 w-5" />
-          </button>
-          <button
             aria-label="Live Cams"
             className="h-10 w-10 grid place-items-center text-foreground hover:text-foreground/70 transition-colors"
           >
