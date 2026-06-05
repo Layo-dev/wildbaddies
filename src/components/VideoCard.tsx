@@ -29,7 +29,7 @@ const VideoCard = ({ slug, title, duration, durationSeconds, views, rating, thum
   const videoSlug = slug ?? fallbackSlug;
   return (
     <a href={`/video/${videoSlug}`} className="group flex flex-col gap-3">
-      <div className="relative overflow-hidden rounded-lg bg-secondary aspect-video">
+      <div className="relative overflow-hidden rounded-none sm:rounded-lg bg-secondary aspect-video">
         {thumbnailUrl ? (
           <img
             src={thumbnailUrl}
@@ -40,13 +40,13 @@ const VideoCard = ({ slug, title, duration, durationSeconds, views, rating, thum
         ) : (
           <div className="h-full w-full bg-black" />
         )}
-        <div className="absolute inset-0 ring-1 ring-inset ring-white/5 rounded-lg pointer-events-none" />
+        <div className="absolute inset-0 ring-1 ring-inset ring-white/5 rounded-none sm:rounded-lg pointer-events-none" />
         <div className="absolute top-2 right-2 rounded bg-black/75 px-2 py-0.5 text-xs font-bold text-white">
           {formatDuration(durationSeconds, duration)}
         </div>
         {/* <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-t from-primary/30 to-transparent" /> */}
       </div>
-      <div className="text-center">
+      <div className="text-center px-4 sm:px-0">
         <h3 className="text-base font-bold text-white truncate">{title}</h3>
         <div className="mt-1 flex items-center justify-center gap-4 text-sm text-muted-foreground">
           <span className="inline-flex items-center gap-1">

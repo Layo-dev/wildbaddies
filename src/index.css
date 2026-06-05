@@ -151,4 +151,17 @@ All colors MUST be HSL.
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+  .btn-glass {
+    background: hsl(60 11% 95% / 0.08);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid hsl(60 11% 95% / 0.18);
+    color: hsl(var(--foreground));
+    transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  }
+  .btn-glass:hover {
+    background: hsl(60 11% 95% / 0.14);
+    border-color: hsl(60 11% 95% / 0.3);
+    box-shadow: 0 0 24px hsl(60 11% 95% / 0.15);
+  }
 }
