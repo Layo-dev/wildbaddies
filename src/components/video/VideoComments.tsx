@@ -45,7 +45,7 @@ const VideoComments = () => {
           />
         </div>*/}
         <button
-          className="inline-flex items-center justify-center rounded-full bg-gradient-purple px-8 py-3 text-sm font-bold uppercase tracking-wider text-white hover:opacity-90 transition-opacity"
+          className="inline-flex items-center justify-center rounded-full bg-background/40 backdrop-blur hover:bg-primary hover:text-white transition z-10 px-8 py-3 text-sm font-bold uppercase tracking-wider text-white hover:opacity-90 transition-opacity"
         >
           Add Comment
         </button>
