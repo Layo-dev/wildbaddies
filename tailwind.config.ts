@@ -68,12 +68,12 @@ export default {
         display: ["'Roboto Condensed'", "system-ui", "sans-serif"],
       },
       backgroundImage: {
-        "gradient-purple": "linear-gradient(135deg, hsl(280 76% 63%), hsl(280 73% 35%))",
-        "gradient-header": "linear-gradient(180deg, hsl(280 60% 18%) 0%, hsl(270 40% 8%) 100%)",
+        "gradient-purple": "linear-gradient(135deg, hsl(60 11% 95%), hsl(0 0% 100%))",
+        "gradient-header": "linear-gradient(180deg, hsl(0 0% 0%) 0%, hsl(0 0% 0%) 100%)",
       },
       boxShadow: {
-        glow: "0 0 20px hsl(280 76% 63% / 0.6)",
-        "glow-soft": "0 0 30px hsl(280 76% 63% / 0.35)",
+        glow: "0 0 20px hsl(60 11% 95% / 0.25)",
+        "glow-soft": "0 0 30px hsl(60 11% 95% / 0.15)",
       },
       keyframes: {
         "accordion-down": {
