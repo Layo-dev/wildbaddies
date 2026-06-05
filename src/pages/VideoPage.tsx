@@ -70,7 +70,9 @@ const VideoPage = () => {
         <section className="container">
           {/* Player skeleton while loading — preserves aspect ratio, no empty player flash */}
           {isLoading ? (
-            <Skeleton className="w-full aspect-video rounded-lg" />
+            <div className="mt-4 -mx-8 sm:mx-0">
+              <Skeleton className="w-full aspect-video rounded-lg" />
+            </div>
           ) : video ? (
             <div className="mt-4 -mx-8 sm:mx-0">
               <VideoPlayer
