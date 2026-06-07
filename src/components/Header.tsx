@@ -184,7 +184,20 @@ const Header = () => {
             aria-label="Open menu"
             className="btn-glass fixed bottom-5 right-4 z-40 h-14 w-14 rounded-full grid place-items-center text-foreground"
           >
-            <Menu className="h-6 w-6" />
+            <svg
+              width="22"
+              height="22"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M2 10.006C2 9.45399 2.448 9.00599 3 9.00599L6 8.99999C6.77 8.99999 7.25 9.83399 6.866 10.5C6.688 10.81 6.358 11 6 11L3 11.006C2.448 11.006 2 10.558 2 10.006ZM2 5.99999C2 5.44799 2.448 4.99999 3 4.99999L12.999 4.99399C13.769 4.99399 14.249 5.82799 13.865 6.49399C13.687 6.80399 13.357 6.99399 12.999 6.99399L3 6.99999C2.448 6.99999 2 6.55199 2 5.99999Z"
+              />
+            </svg>
           </button>
         </SheetTrigger>
         <SheetContent
