@@ -165,26 +165,39 @@ const Header = () => {
             </PopoverContent>
           </Popover>
 
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <button
-                aria-label="Open menu"
-                className="h-10 w-10 grid place-items-center text-foreground hover:text-foreground/70 transition-colors"
-              >
-                <Menu className="h-6 w-6" />
-              </button>
-            </SheetTrigger>
-            <SheetContent
-              side="right"
-              className="w-[78vw] max-w-[340px] bg-background border-l border-foreground/10 p-0 text-foreground"
-            >
+        </div>
+      </div>
+
+      {/* Mobile expandable search */}
+      {searchOpen && (
+        <div className="container md:hidden pb-3 animate-in fade-in slide-in-from-top-1 duration-150">
+          <div className="glass rounded-full px-4 py-2">
+            <SearchBox />
+          </div>
+        </div>
+      )}
+
+      {/* Left-side drawer with floating bottom-right trigger */}
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild>
+          <button
+            aria-label="Open menu"
+            className="btn-glass fixed bottom-5 right-4 z-40 h-14 w-14 rounded-full grid place-items-center text-foreground"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+        </SheetTrigger>
+        <SheetContent
+          side="left"
+          className="w-[78vw] max-w-[340px] bg-background border-r border-foreground/10 p-0 text-foreground"
+        >
               <div className="flex h-full flex-col">
                 {/* Drawer header */}
-                <div className="px-6 pt-6 pb-4">
+                <div className="px-6 pt-8 pb-6">
                   <Link
                     to="/"
                     onClick={() => setOpen(false)}
-                    className="text-2xl font-bold tracking-wide text-foreground"
+                    className="text-3xl font-bold tracking-wide text-foreground"
                   >
                     WILD BADDIES
                   </Link>
@@ -237,17 +250,6 @@ const Header = () => {
               </div>
             </SheetContent>
           </Sheet>
-        </div>
-      </div>
-
-      {/* Mobile expandable search */}
-      {searchOpen && (
-        <div className="container md:hidden pb-3 animate-in fade-in slide-in-from-top-1 duration-150">
-          <div className="glass rounded-full px-4 py-2">
-            <SearchBox />
-          </div>
-        </div>
-      )}
 
       <AuthModal
         open={authOpen}
