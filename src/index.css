@@ -41,6 +41,7 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
+    --gradient-primary: linear-gradient(135deg, hsl(280 76% 63%), hsl(280 73% 35%));
     --gradient-purple: linear-gradient(135deg, hsl(60 11% 95%), hsl(0 0% 100%));
     --gradient-header: linear-gradient(180deg, hsl(0 0% 0%) 0%, hsl(0 0% 0%) 100%);
     --shadow-glow: 0 0 20px hsl(60 11% 95% / 0.25);
@@ -152,7 +153,7 @@ All colors MUST be HSL.
     display: none;
   }
   .btn-glass {
-    background: hsl(60 11% 95% / 0.08);
+    background: hsl(280 76% 63%);
     backdrop-filter: blur(14px) saturate(160%);
     -webkit-backdrop-filter: blur(14px) saturate(160%);
     border: 1px solid hsl(60 11% 95% / 0.18);
