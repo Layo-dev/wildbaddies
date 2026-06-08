@@ -15,24 +15,22 @@ export default {
     extend: {
       colors: {
         border: "hsl(var(--border))",
+        border2: "hsl(var(--border2))",
         input: "hsl(var(--input))",
+        input2: "hsl(var(--input2))",
         ring: "hsl(var(--ring))",
+        ring2: "hsl(var(--ring2))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
-        extend: {
-          colors: {
-            primary2: "hsl(var(--primary2))",
-          },
-       },
+        primary2: "hsl(var(--primary2))",
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
-        primary2: "hsl(var(--primary2))",
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
