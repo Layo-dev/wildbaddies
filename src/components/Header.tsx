@@ -25,11 +25,11 @@ type NavItem = { label: string; href: string; icon: typeof Home; adminOnly?: boo
 const navItems: NavItem[] = [
   { label: "Home", href: "/", icon: Home },
   { label: "Categories", href: "/categories", icon: LayoutGrid },
-  { label: "Search", href: "/search", icon: SearchIcon },
+  //{ label: "Search", href: "/search", icon: SearchIcon },
   { label: "Saved", href: "/profile", icon: Bookmark },
-  { label: "Liked", href: "/profile", icon: Heart },
-  { label: "Check Later", href: "/profile", icon: Clock },
-  { label: "Live Cams", href: "#", icon: Video },
+  { label: "Shorts", href: "#", icon: Heart },
+  //{ label: "Check Later", href: "/profile", icon: Clock },
+  //{ label: "Live Cams", href: "#", icon: Video },
   { label: "Profile", href: "/profile", icon: User },
   { label: "Upload", href: "/upload", icon: Upload, adminOnly: true },
 ];
