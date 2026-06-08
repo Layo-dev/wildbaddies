@@ -33,7 +33,7 @@ const AgeGate = () => {
       <div className="w-full max-w-xl rounded-lg border border-border bg-card shadow-2xl p-6 sm:p-10 text-center">
         <div className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
           BADDIES
-          <span className="ml-2 inline-block rounded bg-primary-purple px-2 py-0.5 text-primary-foreground text-base align-middle">
+          <span className="ml-2 inline-block rounded bg-primary-purple px-2 py-0.5 text-foreground text-base align-middle">
             XXX
           </span>
         </div>
