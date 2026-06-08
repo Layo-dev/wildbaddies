@@ -62,7 +62,7 @@ const AgeGate = () => {
           <button
             type="button"
             onClick={enter}
-            className="rounded-md bg-gradient-purple px-5 py-3 text-sm sm:text-base font-bold text-primary-foreground transition"
+            className="rounded-md bg-gradient-purple2 px-5 py-3 text-sm sm:text-base font-bold text-primary-foreground transition"
           >
             I am 18 or older — Enter
           </button>
