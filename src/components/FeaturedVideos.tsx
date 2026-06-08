@@ -194,9 +194,9 @@ const FeaturedVideos = () => {
           <AdsterraNativeBanner />
         </div>
       {/*</div>*/}
-      {/*<h2 className="text-center text-4xl sm:text-6xl font-bold text-white tracking-tight">
+      <h2 className="text-center text-4xl sm:text-6xl font-bold text-white tracking-tight">
         FEATURED VIDEOS
-      </h2>*/}
+      </h2>
 
       {/* Category chips — horizontal scrolling row */}
       <div className="mt-8 -mx-4 px-4 overflow-x-auto scrollbar-hide">
