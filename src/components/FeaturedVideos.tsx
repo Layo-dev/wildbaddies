@@ -269,7 +269,7 @@ const FeaturedVideos = () => {
 
       {/* Grid */}
       <div
-        className={`mt-10 -mx-8 sm:mx-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 transition-opacity duration-200 ${
+        className={`mt-10 -mx-8 sm:mx-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 transition-opacity duration-200 ${
           isFetching ? "opacity-50" : "opacity-100"
         }`}
       >
