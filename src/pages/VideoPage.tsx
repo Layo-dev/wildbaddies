@@ -32,23 +32,45 @@ const VideoPage = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Helmet>
-        <title>{video ? `${video.title} | Wild Baddies` : "Wild Baddies"}</title>
-        <meta
-          name="description"
-          content={
-            video
-              ? `Watch ${video.title} on Wild Baddies. Free adult videos updated daily.`
-              : "Wild Baddies — premium adult videos updated daily."
-          }
-        />
-        <meta property="og:title" content={video ? `${video.title} | Wild Baddies` : "Wild Baddies"} />
-        <meta property="og:description" content={video ? `Watch ${video.title} on Wild Baddies.` : ""} />
-        <meta property="og:image" content={video?.thumbnail_url ?? ""} />
-        <meta property="og:url" content={`https://wildbaddies.com/video/${slug}`} />
-        <meta property="og:type" content="video.other" />
-        <link rel="canonical" href={`https://wildbaddies.com/video/${slug}`} />
-      </Helmet>
+      {video && (
+        <Helmet>
+          <title>{video ? `${video.title} | Wild Baddies` : "Wild Baddies"}</title>
+          <meta
+            name="description"
+            content={
+              video
+                ? `Watch ${video.title} on Wild Baddies. Free adult videos updated daily.`
+                : "Wild Baddies — premium adult videos updated daily."
+            }
+          />
+          <meta property="og:title" content={video ? `${video.title} | Wild Baddies` : "Wild Baddies"} />
+          <meta property="og:description" content={video ? `Watch ${video.title} on Wild Baddies.` : ""} />
+          <meta property="og:image" content={video?.thumbnail_url ?? ""} />
+          <meta property="og:url" content={`https://wildbaddies.com/video/${slug}`} />
+          <meta property="og:type" content="video.other" />
+          <link rel="canonical" href={`https://wildbaddies.com/video/${slug}`} />
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "VideoObject",
+              "name": video.title,
+              "description": `Watch ${video.title} on Wild Baddies`,
+              "thumbnailUrl": video.thumbnail_url,
+              "uploadDate": video.created_at,
+              "duration": video.duration_seconds
+                ? `PT${Math.floor(video.duration_seconds / 60)}M${video.duration_seconds % 60}S`
+                : undefined,
+              "contentUrl": video.playback_url,
+              "embedUrl": `https://wildbaddies.com/video/${slug}`,
+              "interactionStatistic": {
+                "@type": "InteractionCounter",
+                "interactionType": "https://schema.org/WatchAction",
+                "userInteractionCount": video.views
+              }
+            })}
+          </script>
+        </Helmet>
+      )}
 
       <Header />
       <main>
