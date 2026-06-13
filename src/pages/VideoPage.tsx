@@ -11,6 +11,7 @@ import VideoComments from "@/components/video/VideoComments";
 import SimilarVideos from "@/components/video/SimilarVideos";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getVideoBySlug, listVideos, incrementVideoView } from "@/lib/videos";
+import { Helmet } from "react-helmet-async";
 
 const VideoPage = () => {
   const { slug } = useParams();
@@ -31,6 +32,24 @@ const VideoPage = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <Helmet>
+        <title>{video ? `${video.title} | Wild Baddies` : "Wild Baddies"}</title>
+        <meta
+          name="description"
+          content={
+            video
+              ? `Watch ${video.title} on Wild Baddies. Free adult videos updated daily.`
+              : "Wild Baddies — premium adult videos updated daily."
+          }
+        />
+        <meta property="og:title" content={video ? `${video.title} | Wild Baddies` : "Wild Baddies"} />
+        <meta property="og:description" content={video ? `Watch ${video.title} on Wild Baddies.` : ""} />
+        <meta property="og:image" content={video?.thumbnail_url ?? ""} />
+        <meta property="og:url" content={`https://wildbaddies.com/video/${slug}`} />
+        <meta property="og:type" content="video.other" />
+        <link rel="canonical" href={`https://wildbaddies.com/video/${slug}`} />
+      </Helmet>
+
       <Header />
       <main>
         <section className="container pt-6 sm:pt-10 pb-4">

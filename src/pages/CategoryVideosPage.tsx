@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import VideoCard from "@/components/VideoCard";
@@ -47,6 +48,11 @@ const CategoryVideosPage = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <Helmet>
+        <title>{name ? `${name} Videos | Wild Baddies` : "Wild Baddies"}</title>
+        <meta name="description" content={`Watch the best ${name} videos on Wild Baddies.`} />
+        <link rel="canonical" href={`https://wildbaddies.com/categories/${slug}`} />
+      </Helmet>
       <Header />
       <main>
         <section className="container py-10 sm:py-16">
