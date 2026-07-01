@@ -1,56 +1,35 @@
-## Goal
+## Desktop Left Sidebar (hover-to-expand)
 
-Recreate the navigation pattern from the reference: a **left-side slide-in sidebar** opened by a **floating circular menu button anchored at the bottom-right** of the viewport. The current right-side `Sheet` and the menu icon in the top header will be replaced.
+Add a persistent left sidebar on desktop (md+) that matches the reference: a narrow icon rail that expands on hover to reveal labels, a wordmark at the top, and legal footer links at the bottom. Mobile keeps the current floating button + Sheet drawer unchanged.
 
-## Changes (single file: `src/components/Header.tsx`)
+### Behavior
+- Desktop (`md:` and up): fixed left rail, `w-16` collapsed → `w-64` on hover, smooth width transition (~200ms).
+- Collapsed state: shows only icons centered; wordmark collapses to a small "b" mark (or hidden).
+- Hover state: shows full "WILD BADDIES" wordmark, icon + label rows, and legal footer (COPYRIGHT, TAKEDOWN, CONTACT, CREATORS, WEBMASTERS, TERMS, PRIVACY, 2257) + "© 2026 WILD BADDIES." line.
+- Active route: glass pill background (`bg-foreground/10`), matching current drawer styling.
+- Mobile (`<md`): sidebar hidden; existing floating bottom-right menu button + left Sheet drawer stay as-is.
 
-### 1. Sheet side: right → left
+### Layout impact
+- Add `md:pl-16` to the page shell wrapper so main content clears the rail. Simplest place: wrap `<main>` area — but since the app has no shared layout, apply the left padding on `<body>` via a class on the root `<div id="root">` container OR add it in `App.tsx` around `<Routes>`.
+- Chosen approach: add a `<div className="md:pl-16">` wrapper inside `App.tsx` around the routed content, and render `<DesktopSidebar />` as a sibling. Header keeps its top position; sidebar overlays to the left of it visually — z-index so sidebar sits above header on hover expansion.
 
-- Change `<SheetContent side="right" …>` to `side="left"`.
-- Keep width `w-[78vw] max-w-[340px]`, black bg, off-white text, glass border on the right edge (`border-r border-foreground/10`).
-- Internal structure stays the same (wordmark header, scrollable nav list, legal footer with © line).
+### Structure
+```
+DesktopSidebar (fixed left-0 top-0 h-screen w-16 hover:w-64, hidden md:flex)
+├── Brand row (h-16, wordmark)
+├── Nav list (Home, Categories, Saved, Shorts, Profile, Upload*)
+│   └── each row: h-12, icon (shrink-0), label (opacity-0 → opacity-100 on parent hover, whitespace-nowrap)
+└── Footer (opacity-0 → opacity-100 on hover)
+    ├── Legal links (flex-wrap, uppercase tracking-widest text-xs muted)
+    └── © line
+```
 
-### 2. Leave the Nav items the way it is previously 
+### Files touched
+- add `src/components/DesktopSidebar.tsx` — the new hover-expand sidebar
+- edit `src/App.tsx` — mount `<DesktopSidebar />` and add `md:pl-16` wrapper around routes
+- edit `src/components/Header.tsx` — hide the floating bottom-right menu button on `md:` (mobile-only) so it doesn't conflict with the desktop rail; drawer + trigger remain for mobile
 
-Reorder/relabel `navItems` to mirror the screenshot:
-
-- Home (Home icon)
-- Following (Target icon)
-- Saved (Bookmark)
-- Reacted (Heart)
-- Check Later (Clock)
-- Live Cams (Video)
-- GFs (Sparkles, or "AI" mark)
-- Upload (admin-only, kept)
-
-Active row keeps the glass pill (`bg-foreground/10`) like the "Home" row in the screenshot.
-
-### 3. Remove menu icon from top header
-
-- Drop the `<Menu>` button from the right-side action cluster in the top bar.
-- Keep AI / Live Cams / Search / Account icons.
-
-### 4. Add floating menu trigger (bottom-right)
-
-- New `SheetTrigger` rendered as a **fixed circular glass button** at the bottom-right of the viewport:
-  - `fixed bottom-5 right-4 z-40`
-  - `h-14 w-14 rounded-full grid place-items-center`
-  - Uses `.btn-glass` (frosted background, subtle border, blur) to match the new branding
-  - Visible on all breakpoints (mobile primary; desktop also gets the floating trigger so behavior is consistent)
-  - Icon: `Menu` from lucide (matches the two-line hamburger in the highlighted red box)
-  - `aria-label="Open menu"`
-
-### 5. Spacing / alignment polish to match reference
-
-- Drawer header: `px-6 pt-8 pb-6`, wordmark "WILD BADDIES" large/bold (text-3xl).
-- Nav rows: `h-14`, `gap-4`, `px-4`, `rounded-2xl`, icon `h-5 w-5`, label `text-base font-medium`. Active row uses `bg-foreground/10`.
-- Footer: legal links wrap in two-column-ish flow (`flex flex-wrap gap-x-4 gap-y-2`), uppercase tracking-widest, muted; "© 2026 Wild Baddies." line below in normal-case muted.
-
-## Out of scope
-
-- No changes to routes, AuthContext, AuthModal, SearchBox, FeaturedVideos, VideoCard, design tokens, or any other component.
-- Desktop persistent sidebar layout (the drawer is used on both mobile and desktop via the floating trigger).
-
-## Files touched
-
-- `src/components/Header.tsx`
+### Out of scope
+- No changes to Header top bar contents (search, account, live cams).
+- No changes to routes, auth, tokens, or any page content.
+- Mobile UX unchanged.
