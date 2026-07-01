@@ -182,7 +182,7 @@ const Header = () => {
         <SheetTrigger asChild>
           <button
             aria-label="Open menu"
-            className="btn-glass fixed bottom-5 right-4 z-40 h-14 w-14 rounded-full grid place-items-center text-foreground"
+            className="btn-glass md:hidden fixed bottom-5 right-4 z-40 h-14 w-14 rounded-full grid place-items-center text-foreground"
           >
             <svg
               width="22"
