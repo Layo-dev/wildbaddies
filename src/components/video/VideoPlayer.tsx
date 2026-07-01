@@ -317,7 +317,7 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
                 </PopoverTrigger>
                 <PopoverContent side="top" align="end" sideOffset={8} className="w-36 p-1 bg-card border-border">
                   <button type="button" onClick={() => setQuality(-1)}
-                    className={`flex w-full items-center justify-between rounded px-3 py-2 text-sm font-bold transition ${currentLevel === -1 ? "bg-gradient-purple text-primary-foreground" : "text-foreground hover:bg-secondary"}`}>
+                    className={`flex w-full items-center justify-between rounded px-3 py-2 text-sm font-bold transition ${currentLevel === -1 ? "bg-gradient-purple2 text-primary-foreground" : "text-foreground hover:bg-secondary"}`}>
                     <span>Auto</span>
                   </button>
                   {levels.map((l) => (
