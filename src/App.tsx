@@ -20,6 +20,7 @@ import SearchPage from "./pages/SearchPage.tsx";
 import { AuthProvider } from "./context/AuthContext";
 import AdsterraPopunder from "./components/AdsterraPopunder.tsx";
 import AdsterraSocialBar from "./components/AdsterraSocialBar.tsx";
+import DesktopSidebar from "./components/DesktopSidebar.tsx";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,8 @@ const App = () => (
         <AdsterraPopunder />
         {/*<JuicyPopunder />*/}
         <AdsterraSocialBar />
+          <DesktopSidebar />
+          <div className="md:pl-16">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/video/:slug" element={<VideoPage />} />
@@ -49,6 +52,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </div>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
