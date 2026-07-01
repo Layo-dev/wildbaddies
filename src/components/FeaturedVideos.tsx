@@ -251,7 +251,7 @@ const FeaturedVideos = () => {
               key={o.value}
               onClick={() => handleSortChange(o.value)}
               className={`font-bold transition-colors ${
-                sort === o.value ? "text-primary" : "hover:text-primary2"
+                sort === o.value ? "text-primary2" : "hover:text-primary2"
               }`}
             >
               {o.label}
