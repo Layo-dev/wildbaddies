@@ -25,7 +25,7 @@ const Footer = () => {
         <BannerAd zoneId="5929334" />
       {/*</div>*/}
       <div className="container py-10 text-center">
-        <p className="max-w-2xl mx-auto text-muted-foreground text-base leading-relaxed">
+        <p className="max-w-2xl mx-auto text-foreground text-base leading-relaxed">
           Premium curated videos and creators — discover the baddest collection,
           updated daily. For mature audiences only.
         </p>

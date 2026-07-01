@@ -235,7 +235,7 @@ const FeaturedVideos = () => {
               key={n}
               onClick={() => handleLimitChange(n)}
               className={`font-bold transition-colors ${
-                limit === n ? "text-primary" : "hover:text-primary2"
+                limit === n ? "text-primary2" : "hover:text-primary2"
               }`}
             >
               {n}
