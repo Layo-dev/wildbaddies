@@ -235,7 +235,7 @@ const FeaturedVideos = () => {
               key={n}
               onClick={() => handleLimitChange(n)}
               className={`font-bold transition-colors ${
-                limit === n ? "text-primary" : "hover:text-primary"
+                limit === n ? "text-primary" : "hover:text-primary2"
               }`}
             >
               {n}
@@ -251,7 +251,7 @@ const FeaturedVideos = () => {
               key={o.value}
               onClick={() => handleSortChange(o.value)}
               className={`font-bold transition-colors ${
-                sort === o.value ? "text-primary" : "hover:text-primary"
+                sort === o.value ? "text-primary" : "hover:text-primary2"
               }`}
             >
               {o.label}
@@ -261,7 +261,7 @@ const FeaturedVideos = () => {
 
         {/* Total count */}
         {pagination && (
-          <div className="text-white font-bold">
+          <div className="text-primary2 font-bold">
             {pagination.totalCount.toLocaleString()} videos
           </div>
         )}
