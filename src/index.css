@@ -50,6 +50,9 @@ All colors MUST be HSL.
     --secondary2: 270 30% 12%;
     --secondary-foreground2: 0 0% 100%;
 
+    --muted2: 270 15% 14%;
+    --muted-foreground2: 0 0% 70%;
+
     --accent2: 280 76% 63%;
     --accent-foreground2: 0 0% 100%;
 

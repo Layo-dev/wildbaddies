@@ -34,12 +34,12 @@ const VideoActions = () => {
             </button>
             <button
               aria-label="Dislike"
-              className="h-10 w-10 grid place-items-center rounded-full border border-primary/60 text-primary hover:bg-primary hover:text-white transition-all"
+              className="h-10 w-10 grid place-items-center rounded-full border border-primary/60 text-primary hover:bg-primary2 hover:text-white transition-all"
             >
               <ThumbsDown className="h-4 w-4" />
             </button>
           </div>
-          <span className="text-xs text-muted-foreground">Your rating</span>
+          <span className="text-xs text-muted-foreground2">Your rating</span>
         </div>
       </div>
     </div>
