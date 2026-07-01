@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { useState } from "react";
 import { Eye, Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
@@ -7,6 +8,7 @@ import PromotedModels from "@/components/PromotedModels";
 import VideoPlayer from "@/components/video/VideoPlayer";
 import VideoActions from "@/components/video/VideoActions";
 import VideoMeta from "@/components/video/VideoMeta";
+import ShareSection from "@/components/video/ShareSection";
 import VideoComments from "@/components/video/VideoComments";
 import SimilarVideos from "@/components/video/SimilarVideos";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,6 +17,7 @@ import { Helmet } from "react-helmet-async";
 
 const VideoPage = () => {
   const { slug } = useParams();
+  const [shareOpen, setShareOpen] = useState(false);
 
   const { data: video, isLoading, isError, error } = useQuery({
     queryKey: ["video", slug],
@@ -125,8 +128,9 @@ const VideoPage = () => {
           ) : null}
 
           <div className="mt-6">
-            <VideoActions />
+            <VideoActions onToggleShare={() => setShareOpen((v) => !v)} shareOpen={shareOpen} />
             <VideoMeta videoId={video?.id} />
+            <ShareSection open={shareOpen} />
             <VideoComments />
           </div>
         </section>

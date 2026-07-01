@@ -1,7 +1,12 @@
-import { Download, Share2, Plus, Star, ThumbsUp, ThumbsDown, ChevronDown } from "lucide-react";
+import { Download, Share2, Star, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const VideoActions = () => {
+interface VideoActionsProps {
+  onToggleShare?: () => void;
+  shareOpen?: boolean;
+}
+
+const VideoActions = ({ onToggleShare, shareOpen }: VideoActionsProps) => {
   return (
     <div className="mt-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
       <div className="flex flex-wrap gap-3">
@@ -10,7 +15,15 @@ const VideoActions = () => {
           <Download className="h-4 w-4" /> Download
         </button>
         </Link>
-        <button className="inline-flex items-center gap-2 rounded-full border border-primary/60 bg-secondary2/40 px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary2/20 hover:border-primary2 transition-all">
+        <button
+          onClick={onToggleShare}
+          aria-expanded={shareOpen}
+          className={`inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-all ${
+            shareOpen
+              ? "border-primary bg-primary/20"
+              : "border-primary/60 bg-secondary2/40 hover:bg-primary2/20 hover:border-primary2"
+          }`}
+        >
           <Share2 className="h-4 w-4" /> Share
         </button>
         {/*<button className="inline-flex items-center gap-2 rounded-full border border-primary/60 bg-secondary/40 px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary/20 hover:border-primary transition-all">
