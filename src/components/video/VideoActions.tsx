@@ -28,7 +28,7 @@ const VideoActions = () => {
           <div className="flex items-center gap-2">
             <button
               aria-label="Like"
-              className="h-10 w-10 grid place-items-center rounded-full border border-primary/60 text-primary hover:bg-primary hover:text-white transition-all"
+              className="h-10 w-10 grid place-items-center rounded-full border border-primary/60 text-primary hover:bg-primary2 hover:text-white transition-all"
             >
               <ThumbsUp className="h-4 w-4" />
             </button>
