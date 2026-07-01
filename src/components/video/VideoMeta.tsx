@@ -17,7 +17,7 @@ const VideoMeta = ({ videoId }: VideoMetaProps) => {
   return (
     <div className="mt-8 space-y-6">
       <div>
-        <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-3">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-foreground mb-3">
           Categories
         </h3>
         {isLoading ? (

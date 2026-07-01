@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import VideoCard from "./VideoCard";
 import VideoCardSkeleton from "./VideoCardSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,7 +8,7 @@ import { getVideosByCategory } from "@/lib/videos";
 //import BannerAd from "@/components/BannerAd";
 import AdsterraNativeBanner from "@/components/AdsterraNativeBanner";
 import AdsterraNativeBanner2 from "@/components/AdsterraNativeBanner2";
-import { Fragment } from "react";
+import { useSearchParams } from "react-router-dom";
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Video {
   id: string;
@@ -69,6 +69,49 @@ const SORT_OPTIONS = [
 
 const COLLAPSED_CHIPS_COUNT = 8;
 
+interface FeaturedVideosState {
+  page: number;
+  limit: number;
+  sort: string;
+  selectedCategory: string;
+}
+
+const DEFAULT_FEATURED_VIDEOS_STATE: FeaturedVideosState = {
+  page: 1,
+  limit: 30,
+  sort: "newest",
+  selectedCategory: "all",
+};
+
+export function parseFeaturedVideosSearchParams(search: string | URLSearchParams): FeaturedVideosState {
+  const params = typeof search === "string" ? new URLSearchParams(search) : search;
+
+  const page = Number.parseInt(params.get("page") ?? "", 10);
+  const limit = Number.parseInt(params.get("limit") ?? "", 10);
+  const sort = params.get("sort") ?? DEFAULT_FEATURED_VIDEOS_STATE.sort;
+  const selectedCategory = params.get("category") ?? DEFAULT_FEATURED_VIDEOS_STATE.selectedCategory;
+
+  return {
+    page: Number.isFinite(page) && page > 0 ? page : DEFAULT_FEATURED_VIDEOS_STATE.page,
+    limit: SHOW_OPTIONS.includes(limit) ? limit : DEFAULT_FEATURED_VIDEOS_STATE.limit,
+    sort: SORT_OPTIONS.some((option) => option.value === sort) ? sort : DEFAULT_FEATURED_VIDEOS_STATE.sort,
+    selectedCategory: selectedCategory || DEFAULT_FEATURED_VIDEOS_STATE.selectedCategory,
+  };
+}
+
+export function buildFeaturedVideosSearchParams(state: FeaturedVideosState): string {
+  const params = new URLSearchParams();
+
+  if (state.page > 1) params.set("page", String(state.page));
+  if (state.limit !== DEFAULT_FEATURED_VIDEOS_STATE.limit) params.set("limit", String(state.limit));
+  if (state.sort !== DEFAULT_FEATURED_VIDEOS_STATE.sort) params.set("sort", state.sort);
+  if (state.selectedCategory !== DEFAULT_FEATURED_VIDEOS_STATE.selectedCategory) {
+    params.set("category", state.selectedCategory);
+  }
+
+  return params.toString();
+}
+
 const sortToCategorySort = (s: string): "recent" | "viewed" | "rated" => {
   if (s === "views") return "viewed";
   if (s === "rating") return "rated";
@@ -95,11 +138,20 @@ function getPageWindow(current: number, total: number): (number | "…")[] {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const FeaturedVideos = () => {
-  const [page,  setPage]  = useState(1);
-  const [limit, setLimit] = useState(30);
-  const [sort,  setSort]  = useState("newest");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [page, setPage] = useState(() => parseFeaturedVideosSearchParams(searchParams).page);
+  const [limit, setLimit] = useState(() => parseFeaturedVideosSearchParams(searchParams).limit);
+  const [sort, setSort] = useState(() => parseFeaturedVideosSearchParams(searchParams).sort);
+  const [selectedCategory, setSelectedCategory] = useState(() => parseFeaturedVideosSearchParams(searchParams).selectedCategory);
   const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    const nextState = parseFeaturedVideosSearchParams(searchParams);
+    setPage(nextState.page);
+    setLimit(nextState.limit);
+    setSort(nextState.sort);
+    setSelectedCategory(nextState.selectedCategory);
+  }, [searchParams]);
 
   // ── Categories
   const { data: categories, isLoading: catsLoading } = useQuery<CategoryRecord[]>({
@@ -151,25 +203,38 @@ const FeaturedVideos = () => {
   const totalPages = pagination?.totalPages ?? 1;
   const pageWindow = getPageWindow(page, totalPages);
 
+  const updateStateAndUrl = (next: Partial<FeaturedVideosState>) => {
+    const mergedState: FeaturedVideosState = {
+      page,
+      limit,
+      sort,
+      selectedCategory,
+      ...next,
+    };
+
+    setPage(mergedState.page);
+    setLimit(mergedState.limit);
+    setSort(mergedState.sort);
+    setSelectedCategory(mergedState.selectedCategory);
+    setSearchParams(buildFeaturedVideosSearchParams(mergedState));
+  };
+
   const goTo = (p: number) => {
     if (p < 1 || p > totalPages) return;
-    setPage(p);
+    updateStateAndUrl({ page: p });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleLimitChange = (n: number) => {
-    setLimit(n);
-    setPage(1);
+    updateStateAndUrl({ limit: n, page: 1 });
   };
 
   const handleSortChange = (s: string) => {
-    setSort(s);
-    setPage(1);
+    updateStateAndUrl({ sort: s, page: 1 });
   };
 
   const handleCategoryChange = (slug: string) => {
-    setSelectedCategory(slug);
-    setPage(1);
+    updateStateAndUrl({ selectedCategory: slug, page: 1 });
   };
 
   // Build chip list: synthetic "All" + DB categories
