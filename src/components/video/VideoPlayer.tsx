@@ -325,7 +325,7 @@ const VideoPlayer = ({ videoUrl, posterUrl, onFirstPlay }: VideoPlayerProps) => 
                       className={`flex w-full items-center justify-between rounded px-3 py-2 text-sm font-bold transition ${currentLevel === l.index ? "bg-gradient-purple text-primary-foreground" : "text-foreground hover:bg-secondary"}`}>
                       <span>{l.height}p</span>
                       {l.height >= 720 && (
-                        <span className="ml-2 rounded bg-primary/80 px-1.5 py-0.5 text-[10px] font-bold uppercase text-primary-foreground">HD</span>
+                        <span className="ml-2 rounded bg-primary2/80 px-1.5 py-0.5 text-[10px] font-bold uppercase text-primary-foreground">HD</span>
                       )}
                     </button>
                   ))}
