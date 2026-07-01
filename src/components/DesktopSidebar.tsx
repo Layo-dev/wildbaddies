@@ -14,14 +14,10 @@ const navItems: NavItem[] = [
 ];
 
 const legalLinks = [
-  { label: "Copyright", href: "/dmca" },
-  { label: "Takedown", href: "/dmca" },
-  { label: "Contact", href: "/terms-of-service" },
-  { label: "Creators", href: "/upload" },
-  { label: "Webmasters", href: "/terms-of-service" },
-  { label: "Terms", href: "/terms-of-service" },
-  { label: "Privacy", href: "/privacy-policy" },
-  { label: "2257", href: "/2257" },
+  { label: "Privacy Policy", to: "/privacy-policy" },
+  { label: "DMCA", to: "/dmca" },
+  { label: "Legal", to: "/terms-of-service" },
+  { label: "18 U.S.C. 2257", to: "/2257" },
 ];
 
 const DesktopSidebar = () => {
@@ -72,7 +68,7 @@ const DesktopSidebar = () => {
       <div className="shrink-0 px-4 py-5 border-t border-foreground/10 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-150">
         <div className="flex flex-wrap gap-x-3 gap-y-2 text-[11px] uppercase tracking-widest text-foreground/60">
           {legalLinks.map((l) => (
-            <Link key={l.label} to={l.href} className="hover:text-foreground transition-colors whitespace-nowrap">
+            <Link key={l.label} to={l.to} className="hover:text-foreground transition-colors whitespace-nowrap">
               {l.label}
             </Link>
           ))}
