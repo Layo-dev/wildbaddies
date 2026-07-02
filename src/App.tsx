@@ -18,7 +18,7 @@ import Compliance2257Page from "./pages/Compliance2257Page";
 import ProfilePage from "./pages/ProfilePage.tsx";
 import SearchPage from "./pages/SearchPage.tsx";
 import { AuthProvider } from "./context/AuthContext";
-import AdsterraPopunder from "./components/AdsterraPopunder.tsx";
+//import AdsterraPopunder from "./components/AdsterraPopunder.tsx";
 import AdsterraSocialBar from "./components/AdsterraSocialBar.tsx";
 import DesktopSidebar from "./components/DesktopSidebar.tsx";
 
@@ -32,7 +32,7 @@ const App = () => (
         <Sonner />
         <AgeGate />
         <BrowserRouter>
-        <AdsterraPopunder />
+        {/*<AdsterraPopunder />*/}
         {/*<JuicyPopunder />*/}
         <AdsterraSocialBar />
           <DesktopSidebar />
