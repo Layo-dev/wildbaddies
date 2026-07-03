@@ -50,7 +50,7 @@ const SubmitButton = ({ children, loading }: { children: React.ReactNode; loadin
   <button
     type="submit"
     disabled={loading}
-    className="w-full rounded-full bg-gradient-purple px-8 py-3.5 text-sm font-extrabold tracking-widest uppercase text-white shadow-[var(--shadow-glow-soft)] hover:opacity-95 transition-opacity disabled:opacity-60"
+    className="w-full rounded-full bg-gradient-purple2 px-8 py-3.5 text-sm font-extrabold tracking-widest uppercase text-white shadow-[var(--shadow-glow-soft)] hover:opacity-95 transition-opacity disabled:opacity-60"
   >
     {loading ? "Please wait…" : children}
   </button>
