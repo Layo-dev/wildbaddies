@@ -155,7 +155,7 @@ const UploadPage = () => {
               <div className="space-y-2">
                 <span className="font-bold tracking-wider uppercase">Video file</span>
                 <div className="flex items-center gap-3 rounded-md border border-primary/40 bg-secondary/30 p-2">
-                  <label className="cursor-pointer rounded-full bg-gradient-purple px-5 py-2 text-sm font-bold uppercase tracking-wider text-white transition-shadow">
+                  <label className="cursor-pointer rounded-full bg-gradient-purple2 px-5 py-2 text-sm font-bold uppercase tracking-wider text-white transition-shadow">
                     Choose file
                     <input
                       type="file"
@@ -181,7 +181,7 @@ const UploadPage = () => {
                   </div>
                   <div className="h-2 rounded-full bg-secondary/50 overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-purple transition-all duration-300"
+                      className="h-full rounded-full bg-gradient-purple2 transition-all duration-300"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
@@ -191,7 +191,7 @@ const UploadPage = () => {
               <button
                 type="submit"
                 disabled={isPending}
-                className="w-full sm:w-80 rounded-full bg-gradient-purple py-3.5 font-bold uppercase tracking-widest text-white hover:opacity-95 transition-opacity disabled:opacity-60"
+                className="w-full sm:w-80 rounded-full bg-gradient-purple2 py-3.5 font-bold uppercase tracking-widest text-white hover:opacity-95 transition-opacity disabled:opacity-60"
               >
                 {isPending ? "Uploading…" : "Upload video"}
               </button>
