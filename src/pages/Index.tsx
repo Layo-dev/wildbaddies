@@ -10,7 +10,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Helmet>
-        <title>Wild Baddies|Free Adult Videos</title>
+        <title>Wild Baddies | Free Adult Videos</title>
         <meta name="description" content="Wild Baddies — The home of curvaceous and confident baddies. Free adult videos updated daily." />
         <link rel="canonical" href="https://wildbaddies.com/" />
       </Helmet>
