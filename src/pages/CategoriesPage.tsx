@@ -33,7 +33,7 @@ const CategoriesPage = () => {
     <div className="min-h-screen bg-background text-foreground">
       <Helmet>
         <title>Categories | Wild Baddies</title>
-        <meta name="description" content="Browse all video categories on Wild Baddies." />
+        <meta name="description" content="Explore Wild Baddies categories — free Latina, Ebony, Thick, Amateur and OnlyFans baddies porn videos. New explicit clips every day. Browse and watch." />
         <link rel="canonical" href="https://wildbaddies.com/categories" />
       </Helmet>
       <Header />
