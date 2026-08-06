@@ -32,9 +32,50 @@ export default async function handler(
     return res.status(500).send(categoriesError.message);
   }
 
-  // Temporary response
-  return res.status(200).json({
-    videos,
-    categories,
-  });
+  const baseUrl = "https://wildbaddies.com";
+
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
+  <urlset
+    xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  `;
+
+  // Homepage
+  xml += `
+  <url>
+    <loc>${baseUrl}/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  `;
+
+  // Categories
+  for (const category of categories ?? []) {
+    xml += `
+  <url>
+    <loc>${baseUrl}/categories/${category.slug}</loc>
+    <lastmod>${new Date(category.created_at).toISOString()}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  `;
+  }
+
+  // Videos
+  for (const video of videos ?? []) {
+    xml += `
+  <url>
+    <loc>${baseUrl}/video/${video.slug}</loc>
+    <lastmod>${new Date(video.updated_at).toISOString()}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  `;
+  }
+
+  xml += `
+  </urlset>
+  `;
+
+  res.setHeader("Content-Type", "application/xml");
+  return res.status(200).send(xml);
 }
