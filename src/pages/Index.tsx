@@ -10,17 +10,17 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Helmet>
-        <title>Wild Baddies | Trending HD Videos & Popular Categories</title>
+        <title>Wild Baddies | Baddies Porn</title>
         <meta
           name="description"
-          content="Discover trending HD videos, promoted creators, and popular categories. New content is added regularly on Wild Baddies."
+          content="Wild Baddies — Free baddies porn videos, OnlyFans clips, Latina, Ebony & thick amateurs. Daily new explicit videos and photos. Watch the wildest baddies now."
         />
         <link rel="canonical" href="https://wildbaddies.com/" />
       </Helmet>
       <Header />
       {/*<AdBanner />*/}
       <main>
-        <h1 className="sr-only"> Wild Baddies - Trending HD Videos & Popular Categories</h1>
+        <h1 className="sr-only"> Wild Baddies - Baddies Porn</h1>
         <FeaturedVideos />
         <ExoSliderAd />
         <PromotedModels />
