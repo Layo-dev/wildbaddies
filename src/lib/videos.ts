@@ -52,6 +52,8 @@ export interface UploadVideoOptions {
   title: string;
   file: File;
   categoryIds?: string[];
+  tags?: string[];
+  tagIds?: string[];
   onProgress?: (percentage: number) => void;
 }
 
@@ -73,13 +75,15 @@ export const uploadVideo = async ({
   title,
   file,
   categoryIds = [],
+  tags = [],
+  tagIds = [],
   onProgress,
 }: UploadVideoOptions): Promise<UploadVideoResult> => {
   const client = ensureSupabase();
 
   // Step 1: Get TUS credentials from edge function
   const { data, error } = await client.functions.invoke("get-upload-url", {
-    body: { title, categoryIds },
+    body: { title, categoryIds, tags, tagIds },
   });
 
   if (error) throw new Error(error.message);
