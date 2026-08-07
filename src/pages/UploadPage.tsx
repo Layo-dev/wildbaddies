@@ -165,7 +165,6 @@ const UploadPage = () => {
 
               <div className="space-y-2">
                 <span className="font-bold tracking-wider uppercase">Video file</span>
-                {null}
                 <div className="flex items-center gap-3 rounded-md border border-primary/40 bg-secondary/30 p-2">
                   <label className="cursor-pointer rounded-full bg-gradient-purple2 px-5 py-2 text-sm font-bold uppercase tracking-wider text-white transition-shadow">
                     Choose file
