@@ -6,6 +6,8 @@ import { Upload as UploadIcon } from "lucide-react";
 import { toast } from "sonner";
 import { uploadVideo } from "@/lib/videos";
 import { listCategories } from "@/lib/categories";
+import { listTags } from "@/lib/tags";
+import TagAutocomplete, { type SelectedTag } from "@/components/tags/TagAutocomplete";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
@@ -19,6 +21,7 @@ const UploadPage = () => {
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
   const [progress, setProgress] = useState(0);
   const [lastVideoId, setLastVideoId] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -26,6 +29,11 @@ const UploadPage = () => {
   const { data: categories = [], isLoading: categoriesLoading, isError: categoriesError } = useQuery({
     queryKey: ["categories"],
     queryFn: listCategories,
+  });
+
+  const { data: tags = [], isLoading: tagsLoading } = useQuery({
+    queryKey: ["tags"],
+    queryFn: listTags,
   });
 
   const toggleCategory = (id: string) => {
@@ -48,6 +56,8 @@ const UploadPage = () => {
         title: title.trim(),
         file,
         categoryIds: Array.from(selectedIds),
+        tags: selectedTags.map((t) => t.name),
+        tagIds: selectedTags.map((t) => t.id).filter((id): id is string => Boolean(id)),
         onProgress: setProgress,
       });
     },
@@ -56,6 +66,7 @@ const UploadPage = () => {
       setTitle("");
       setFile(null);
       setSelectedIds(new Set());
+      setSelectedTags([]);
       setProgress(0);
       toast.success("Video uploaded to Bunny and queued for processing.");
       queryClient.invalidateQueries({ queryKey: ["videos"] });
