@@ -163,6 +163,14 @@ const UploadPage = () => {
                 )}
               </div>
 
+              <TagAutocomplete
+                available={tags}
+                value={selectedTags}
+                onChange={setSelectedTags}
+                disabled={isPending}
+                loading={tagsLoading}
+              />
+
               <div className="space-y-2">
                 <span className="font-bold tracking-wider uppercase">Video file</span>
                 <div className="flex items-center gap-3 rounded-md border border-primary/40 bg-secondary/30 p-2">
