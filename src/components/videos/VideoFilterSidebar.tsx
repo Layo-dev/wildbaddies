@@ -40,7 +40,7 @@ const VideoFilterSidebar = ({
             style={{ width: `${Math.max(fillPct, 2)}%` }}
           />
           <div
-            className="absolute -top-1.5 h-4.5 w-4.5 h-[18px] w-[18px] -translate-x-1/2 rounded-full bg-primary shadow-[0_0_12px_hsl(var(--primary)/0.6)] transition-all"
+            className="absolute -top-1.5 h-[18px] w-[18px] -translate-x-1/2 rounded-full bg-primary shadow-[0_0_12px_hsl(var(--primary)/0.6)] transition-all"
             style={{ left: `${fillPct}%` }}
           />
         </div>
