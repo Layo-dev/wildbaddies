@@ -1,11 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, LayoutGrid, Bookmark, Heart, User, Upload, Tags } from "lucide-react";
+import { Home, LayoutGrid, Bookmark, Heart, User, Upload, Tags, Video, Users } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 type NavItem = { label: string; href: string; icon: typeof Home; adminOnly?: boolean };
 
 const navItems: NavItem[] = [
   { label: "Home", href: "/", icon: Home },
+  { label: "Videos", href: "/videos", icon: Video },
+  { label: "Models", href: "/models", icon: Users },
   { label: "Categories", href: "/categories", icon: LayoutGrid },
   { label: "Tags", href: "/tags", icon: Tags },
   { label: "Saved", href: "/profile", icon: Bookmark },

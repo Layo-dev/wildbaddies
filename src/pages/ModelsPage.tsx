@@ -1,0 +1,102 @@
+import { Helmet } from "react-helmet-async";
+import { useQuery } from "@tanstack/react-query";
+import { ChevronDown, Search as SearchIcon, BadgeCheck, Star } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import ModelCard from "@/components/models/ModelCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import { listModels } from "@/lib/models";
+
+const ModelsPage = () => {
+  const { data: models = [], isLoading, isError, error } = useQuery({
+    queryKey: ["models"],
+    queryFn: listModels,
+  });
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <Helmet>
+        <title>Models | Wild Baddies</title>
+        <meta
+          name="description"
+          content="Meet the models featured on Wild Baddies — browse verified creators and collabs."
+        />
+        <link rel="canonical" href="https://wildbaddies.com/models" />
+        <meta property="og:title" content="Models | Wild Baddies" />
+        <meta property="og:description" content="Meet the models featured on Wild Baddies." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://wildbaddies.com/models" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+
+      <Header />
+
+      <main>
+        <section className="container py-8 sm:py-12">
+          <h1 className="text-center text-3xl sm:text-5xl font-bold uppercase tracking-tight text-foreground">
+            Models
+          </h1>
+
+          {/* Filter bar (display only) */}
+          <div className="mt-6 flex flex-col items-center gap-4 lg:flex-row lg:justify-between">
+            <div className="hidden lg:flex items-center gap-2 text-sm">
+              <SearchIcon className="h-4 w-4 text-primary" />
+              <input
+                type="text"
+                placeholder="Model search"
+                aria-label="Model search"
+                className="bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-bold uppercase tracking-wide">
+              <span className="text-primary">All Models</span>
+              <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+                <BadgeCheck className="h-4 w-4" /> Verified
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+                <Star className="h-4 w-4" /> Collab
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-bold uppercase tracking-wide text-primary">
+              <span className="inline-flex items-center gap-1">
+                Most Viewed <ChevronDown className="h-4 w-4" />
+              </span>
+              <span className="inline-flex items-center gap-1">
+                All Categories <ChevronDown className="h-4 w-4" />
+              </span>
+            </div>
+          </div>
+
+          {/* Grid */}
+          <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8">
+            {isLoading &&
+              Array.from({ length: 12 }).map((_, i) => (
+                <div key={i} className="flex flex-col gap-2">
+                  <Skeleton className="aspect-[3/4] w-full rounded-xl" />
+                  <Skeleton className="mx-auto h-4 w-2/3" />
+                </div>
+              ))}
+
+            {!isLoading &&
+              !isError &&
+              models.map((m, i) => <ModelCard key={m.id} model={m} rank={i + 1} />)}
+          </div>
+
+          {isError && (
+            <p className="mt-10 text-center text-sm text-destructive">{(error as Error).message}</p>
+          )}
+
+          {!isLoading && !isError && models.length === 0 && (
+            <p className="mt-10 text-center text-muted-foreground">No models yet.</p>
+          )}
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default ModelsPage;
