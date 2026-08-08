@@ -12,6 +12,7 @@ import {
   Heart,
   Clock,
   Tags,
+  Users,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import mascot from "@/assets/baddies-mascot.png";
@@ -25,6 +26,8 @@ type NavItem = { label: string; href: string; icon: typeof Home; adminOnly?: boo
 
 const navItems: NavItem[] = [
   { label: "Home", href: "/", icon: Home },
+  { label: "Videos", href: "/videos", icon: Video },
+  { label: "Models", href: "/models", icon: Users },
   { label: "Categories", href: "/categories", icon: LayoutGrid },
   { label: "Tags", href: "/tags", icon: Tags },
   //{ label: "Search", href: "/search", icon: SearchIcon },
