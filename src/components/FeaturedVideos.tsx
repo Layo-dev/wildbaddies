@@ -118,24 +118,6 @@ const sortToCategorySort = (s: string): "recent" | "viewed" | "rated" => {
   return "recent";
 };
 
-// ─── Pagination UI ────────────────────────────────────────────────────────────
-function getPageWindow(current: number, total: number): (number | "…")[] {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-
-  const pages: (number | "…")[] = [1];
-
-  if (current > 3) pages.push("…");
-
-  const start = Math.max(2, current - 1);
-  const end   = Math.min(total - 1, current + 1);
-  for (let i = start; i <= end; i++) pages.push(i);
-
-  if (current < total - 2) pages.push("…");
-  pages.push(total);
-
-  return pages;
-}
-
 // ─── Component ────────────────────────────────────────────────────────────────
 const FeaturedVideos = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -201,7 +183,6 @@ const FeaturedVideos = () => {
   const videos     = data?.videos     ?? [];
   const pagination = data?.pagination ?? null;
   const totalPages = pagination?.totalPages ?? 1;
-  const pageWindow = getPageWindow(page, totalPages);
 
   const updateStateAndUrl = (next: Partial<FeaturedVideosState>) => {
     const mergedState: FeaturedVideosState = {
@@ -373,58 +354,6 @@ const FeaturedVideos = () => {
         ))}
       </div>
 
-      {/* Pagination row */}
-      {pagination && totalPages > 1 && (
-        <div className="mt-10 flex items-center justify-center gap-2">
-          {/* Prev */}
-          <button
-            onClick={() => goTo(page - 1)}
-            disabled={!pagination.hasPrevPage}
-            aria-label="Previous page"
-            className="h-9 w-9 rounded-full grid place-items-center text-white hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition"
-          >
-            ‹
-          </button>
-
-          {/* Page numbers */}
-          {pageWindow.map((p, i) =>
-            p === "…" ? (
-              <span key={`ellipsis-${i}`} className="text-muted-foreground px-1">
-                …
-              </span>
-            ) : (
-              <button
-                key={p}
-                onClick={() => goTo(p as number)}
-                className={`h-9 w-9 rounded-full grid place-items-center font-bold transition ${
-                  p === page
-                    ? "bg-primary2 text-white"
-                    : "text-white hover:text-primary"
-                }`}
-              >
-                {p}
-              </button>
-            )
-          )}
-
-          {/* Next */}
-          <button
-            onClick={() => goTo(page + 1)}
-            disabled={!pagination.hasNextPage}
-            aria-label="Next page"
-            className="h-9 w-9 rounded-full grid place-items-center text-white hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition"
-          >
-            ›
-          </button>
-        </div>
-      )}
-
-      {/* Page info */}
-      {pagination && totalPages > 1 && (
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          Page {page} of {totalPages.toLocaleString()}
-        </p>
-      )}
     </section>
   );
 };
