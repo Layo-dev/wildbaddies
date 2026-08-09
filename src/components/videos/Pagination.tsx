@@ -60,7 +60,7 @@ const Pagination = ({ page, totalPages, onChange }: Props) => {
         aria-label="Next page"
         disabled={page === totalPages}
         onClick={() => onChange(page + 1)}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-foreground/10 text-foreground disabled:opacity-40 hover:bg-foreground/20 transition-colors"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-foreground/10 text-foreground disabled:opacity-40 hover:bg-primary-hover2 transition-colors"
       >
         <ChevronRight className="h-4 w-4" />
       </button>
