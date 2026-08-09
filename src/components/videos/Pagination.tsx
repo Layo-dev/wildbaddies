@@ -28,7 +28,7 @@ const Pagination = ({ page, totalPages, onChange }: Props) => {
         aria-label="Previous page"
         disabled={page === 1}
         onClick={() => onChange(page - 1)}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-primary2 text-primary-foreground disabled:opacity-40 hover:bg-foreground/20 transition-colors"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-foreground/10 text-foreground disabled:opacity-40 hover:bg-primary-hover2 transition-colors"
       >
         <ChevronLeft className="h-4 w-4" />
       </button>
@@ -46,8 +46,8 @@ const Pagination = ({ page, totalPages, onChange }: Props) => {
             aria-current={p === page ? "page" : undefined}
             className={`inline-flex h-9 min-w-9 items-center justify-center rounded-md px-3 text-sm font-bold transition-colors ${
               p === page
-                ? "bg-primary text-primary-foreground shadow-[0_0_20px_hsl(var(--primary)/0.6)]"
-                : "bg-foreground/10 text-foreground hover:bg-foreground/20"
+                ? "bg-primary2 text-primary-foreground shadow-[0_0_20px_hsl(var(--primary2)/0.6)]"
+                : "bg-foreground/10 text-foreground hover:bg-primary-hover2"
             }`}
           >
             {p}
