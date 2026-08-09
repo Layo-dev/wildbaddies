@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import VideoCard from "./VideoCard";
 import VideoCardSkeleton from "./VideoCardSkeleton";
+import Pagination from "./videos/Pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { listCategories, type CategoryRecord } from "@/lib/categories";
@@ -354,6 +355,9 @@ const FeaturedVideos = () => {
         ))}
       </div>
 
+      {pagination && totalPages > 1 && (
+        <Pagination page={page} totalPages={totalPages} onChange={goTo} />
+      )}
     </section>
   );
 };
