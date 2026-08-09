@@ -51,7 +51,7 @@ const MobileVideoFilters = ({
     <div className="lg:hidden">
       <div className="flex items-center justify-center gap-6">
         <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-primary">
+          <DropdownMenuTrigger className="inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-primary2">
             {SORT_LABELS[sort]} <ChevronDown className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
@@ -64,7 +64,7 @@ const MobileVideoFilters = ({
         </DropdownMenu>
 
         <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-primary">
+          <DropdownMenuTrigger className="inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-primary2">
             {durationLabel(minDuration)} <ChevronDown className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">

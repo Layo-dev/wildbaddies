@@ -130,7 +130,7 @@ const VideosPage = () => {
                       resetPage();
                     }}
                     className={`text-sm font-bold uppercase tracking-wide transition-colors ${
-                      sort === s.id ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                      sort === s.id ? "text-primary2" : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     {s.label}
