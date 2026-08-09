@@ -7,7 +7,9 @@ import { toast } from "sonner";
 import { uploadVideo } from "@/lib/videos";
 import { listCategories } from "@/lib/categories";
 import { listTags } from "@/lib/tags";
+import { listModels, type ModelRecord } from "@/lib/models";
 import TagAutocomplete, { type SelectedTag } from "@/components/tags/TagAutocomplete";
+import ModelMultiSelect from "@/components/models/ModelMultiSelect";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
@@ -21,6 +23,7 @@ const UploadPage = () => {
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectedModels, setSelectedModels] = useState<ModelRecord[]>([]);
   const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
   const [progress, setProgress] = useState(0);
   const [lastVideoId, setLastVideoId] = useState<string | null>(null);
@@ -34,6 +37,11 @@ const UploadPage = () => {
   const { data: tags = [], isLoading: tagsLoading } = useQuery({
     queryKey: ["tags"],
     queryFn: listTags,
+  });
+
+  const { data: models = [], isLoading: modelsLoading, isError: modelsError } = useQuery({
+    queryKey: ["models"],
+    queryFn: listModels,
   });
 
   const toggleCategory = (id: string) => {
@@ -56,6 +64,7 @@ const UploadPage = () => {
         title: title.trim(),
         file,
         categoryIds: Array.from(selectedIds),
+        modelIds: selectedModels.map((m) => m.id),
         tags: selectedTags.map((t) => t.name),
         tagIds: selectedTags.map((t) => t.id).filter((id): id is string => Boolean(id)),
         onProgress: setProgress,
@@ -66,6 +75,7 @@ const UploadPage = () => {
       setTitle("");
       setFile(null);
       setSelectedIds(new Set());
+      setSelectedModels([]);
       setSelectedTags([]);
       setProgress(0);
       toast.success("Video uploaded to Bunny and queued for processing.");
@@ -162,6 +172,18 @@ const UploadPage = () => {
                   </>
                 )}
               </div>
+
+              <ModelMultiSelect
+                available={models}
+                value={selectedModels}
+                onChange={setSelectedModels}
+                disabled={isPending}
+                loading={modelsLoading}
+              />
+
+              {modelsError && (
+                <p className="text-sm text-destructive">Failed to load models.</p>
+              )}
 
               <TagAutocomplete
                 available={tags}

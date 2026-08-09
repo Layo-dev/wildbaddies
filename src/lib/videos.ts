@@ -52,6 +52,7 @@ export interface UploadVideoOptions {
   title: string;
   file: File;
   categoryIds?: string[];
+  modelIds?: string[];
   tags?: string[];
   tagIds?: string[];
   onProgress?: (percentage: number) => void;
@@ -75,6 +76,7 @@ export const uploadVideo = async ({
   title,
   file,
   categoryIds = [],
+  modelIds = [],
   tags = [],
   tagIds = [],
   onProgress,
@@ -83,7 +85,7 @@ export const uploadVideo = async ({
 
   // Step 1: Get TUS credentials from edge function
   const { data, error } = await client.functions.invoke("get-upload-url", {
-    body: { title, categoryIds, tags, tagIds },
+    body: { title, categoryIds, modelIds, tags, tagIds },
   });
 
   if (error) throw new Error(error.message);

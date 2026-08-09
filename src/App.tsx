@@ -12,6 +12,7 @@ import CategoryVideosPage from "./pages/CategoryVideosPage.tsx";
 import TagsPage from "./pages/TagsPage.tsx";
 import VideosPage from "./pages/VideosPage.tsx";
 import ModelsPage from "./pages/ModelsPage.tsx";
+import ModelPage from "./pages/ModelPage.tsx";
 import AgeGate from "./components/AgeGate.tsx";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import DmcaPage from "./pages/DmcaPage";
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/tags" element={<TagsPage />} />
             <Route path="/videos" element={<VideosPage />} />
             <Route path="/models" element={<ModelsPage />} />
+            <Route path="/models/:slug" element={<ModelPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
