@@ -77,7 +77,7 @@ const VideoActions = ({ onToggleShare, shareOpen, videoId }: VideoActionsProps) 
               onClick={() => handleReact("like")}
               className={`h-10 w-10 grid place-items-center rounded-full border transition-all disabled:opacity-60 ${
                 reaction === "like"
-                  ? "border-primary bg-primary text-white"
+                  ? "border-primary bg-primary2 text-white"
                   : "border-primary/60 text-primary hover:bg-primary2 hover:text-white"
               }`}
             >
@@ -90,7 +90,7 @@ const VideoActions = ({ onToggleShare, shareOpen, videoId }: VideoActionsProps) 
               onClick={() => handleReact("dislike")}
               className={`h-10 w-10 grid place-items-center rounded-full border transition-all disabled:opacity-60 ${
                 reaction === "dislike"
-                  ? "border-primary bg-primary text-white"
+                  ? "border-primary bg-primary2 text-white"
                   : "border-primary/60 text-primary hover:bg-primary2 hover:text-white"
               }`}
             >
