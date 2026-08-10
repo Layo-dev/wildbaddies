@@ -1,11 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { VideoRecord } from "@/lib/videos";
 
-export interface ModelSocialLink {
-  platform: string;
-  url: string;
-}
-
 export interface ModelRecord {
   id: string;
   name: string;
@@ -15,7 +10,13 @@ export interface ModelRecord {
   is_active: boolean;
   created_at: string | null;
   video_count: number | null;
-  social_links: ModelSocialLink[];
+  subscribers_count: number | null;
+  profile_views: number | null;
+  instagram_url: string | null;
+  twitter_url: string | null;
+  tiktok_url: string | null;
+  onlyfans_url: string | null;
+  fansly_url: string | null;
 }
 
 export interface ModelBySlugResult {
@@ -39,32 +40,9 @@ const toNumber = (v: unknown): number | null => {
   return Number.isFinite(n) ? n : null;
 };
 
-const parseSocialLinks = (raw: unknown): ModelSocialLink[] => {
-  if (!raw) return [];
-  if (Array.isArray(raw)) {
-    return raw
-      .map((item) => {
-        if (typeof item === "object" && item !== null) {
-          const row = item as Record<string, unknown>;
-          const url = String(row.url ?? row.href ?? "").trim();
-          const platform = String(row.platform ?? row.name ?? row.type ?? "Link").trim();
-          if (!url) return null;
-          return { platform, url };
-        }
-        return null;
-      })
-      .filter((l): l is ModelSocialLink => Boolean(l));
-  }
-  if (typeof raw === "object") {
-    return Object.entries(raw as Record<string, unknown>)
-      .map(([platform, url]) => {
-        const href = String(url ?? "").trim();
-        if (!href) return null;
-        return { platform, url: href };
-      })
-      .filter((l): l is ModelSocialLink => Boolean(l));
-  }
-  return [];
+const toUrl = (v: unknown): string | null => {
+  const url = String(v ?? "").trim();
+  return url || null;
 };
 
 export const mapModelRow = (row: Record<string, unknown>): ModelRecord => {
@@ -82,12 +60,61 @@ export const mapModelRow = (row: Record<string, unknown>): ModelRecord => {
     is_active: Boolean(row.is_active ?? true),
     created_at: (row.created_at as string | null) ?? null,
     video_count: toNumber(row.video_count ?? row.videos_count ?? row.count),
-    social_links: parseSocialLinks(row.social_links ?? row.socials ?? row.links),
+    subscribers_count: toNumber(row.subscribers_count ?? row.subscriber_count),
+    profile_views: toNumber(row.profile_views ?? row.profile_view_count),
+    instagram_url: toUrl(row.instagram_url),
+    twitter_url: toUrl(row.twitter_url ?? row.x_url),
+    tiktok_url: toUrl(row.tiktok_url),
+    onlyfans_url: toUrl(row.onlyfans_url),
+    fansly_url: toUrl(row.fansly_url),
   };
 };
 
 const VIDEO_SELECT =
   "id,title,slug,bunny_video_id,status,playback_url,thumbnail_url,duration_seconds,views,rating,created_at";
+
+export async function incrementModelProfileView(modelId: string): Promise<void> {
+  const client = ensureSupabase();
+  const { error } = await client.rpc("increment_model_profile_view", {
+    p_model_id: modelId,
+  });
+  if (error) {
+    console.error("Failed to increment profile view:", error);
+  }
+}
+
+export const isSubscribedToModel = async (userId: string, modelId: string): Promise<boolean> => {
+  const client = ensureSupabase();
+  const { data, error } = await client
+    .from("model_subscriptions")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("model_id", modelId)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  return Boolean(data);
+};
+
+export const subscribeToModel = async (userId: string, modelId: string): Promise<void> => {
+  const client = ensureSupabase();
+  const { error } = await client
+    .from("model_subscriptions")
+    .insert({ user_id: userId, model_id: modelId });
+
+  if (error) throw new Error(error.message);
+};
+
+export const unsubscribeFromModel = async (userId: string, modelId: string): Promise<void> => {
+  const client = ensureSupabase();
+  const { error } = await client
+    .from("model_subscriptions")
+    .delete()
+    .eq("user_id", userId)
+    .eq("model_id", modelId);
+
+  if (error) throw new Error(error.message);
+};
 
 export const listModels = async (): Promise<ModelRecord[]> => {
   const client = ensureSupabase();

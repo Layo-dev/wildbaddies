@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
@@ -7,8 +7,8 @@ import ModelProfile from "@/components/models/ModelProfile";
 import VideoCard from "@/components/VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronDown } from "lucide-react";
-import { getModelBySlug } from "@/lib/models";
-import type { ModelBySlugResult } from "@/lib/models";
+import { getModelBySlug, incrementModelProfileView } from "@/lib/models";
+import type { ModelBySlugResult, ModelRecord } from "@/lib/models";
 import type { VideoRecord, VideoSort } from "@/lib/videos";
 import { formatCount } from "@/lib/format";
 
@@ -33,6 +33,7 @@ const ModelPage = () => {
   const [data, setData] = useState<ModelBySlugResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const viewTrackedRef = useRef<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -55,6 +56,27 @@ const ModelPage = () => {
   }, [slug]);
 
   const model = data?.model ?? null;
+
+  useEffect(() => {
+    if (!model?.id || viewTrackedRef.current === model.id) return;
+    viewTrackedRef.current = model.id;
+    incrementModelProfileView(model.id);
+    setData((prev) => {
+      if (!prev?.model) return prev;
+      const views = prev.model.profile_views ?? 0;
+      return {
+        ...prev,
+        model: { ...prev.model, profile_views: views + 1 },
+      };
+    });
+  }, [model?.id]);
+
+  const handleModelUpdate = (patch: Partial<ModelRecord>) => {
+    setData((prev) => {
+      if (!prev?.model) return prev;
+      return { ...prev, model: { ...prev.model, ...patch } };
+    });
+  };
   const videos = useMemo(
     () => sortVideos(data?.videos ?? [], sort),
     [data?.videos, sort],
@@ -113,7 +135,7 @@ const ModelPage = () => {
           {!loading && !error && model && (
             <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,280px)_1fr] gap-10 lg:gap-14">
               <aside className="lg:sticky lg:top-24 lg:self-start">
-                <ModelProfile model={model} />
+                <ModelProfile model={model} onModelUpdate={handleModelUpdate} />
               </aside>
 
               <div>
