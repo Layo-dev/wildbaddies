@@ -210,6 +210,7 @@ const VideoPage = () => {
             <VideoActions
               onToggleShare={() => setShareOpen((v) => !v)}
               shareOpen={shareOpen}
+              videoId={video?.id}
             />
             <VideoMeta videoId={video?.id} />
             <ShareSection open={shareOpen} />

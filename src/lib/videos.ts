@@ -309,3 +309,91 @@ export const getVideosByCategory = async (
     videos,
   };
 };
+
+// ─── Likes / Dislikes ─────────────────────────────────────────────────────────
+
+export type VideoReaction = "like" | "dislike" | null;
+
+const currentUserId = async (): Promise<string | null> => {
+  const client = ensureSupabase();
+  const {
+    data: { user },
+  } = await client.auth.getUser();
+  return user?.id ?? null;
+};
+
+export const hasLikedVideo = async (videoId: string): Promise<boolean> => {
+  const client = ensureSupabase();
+  const userId = await currentUserId();
+  if (!userId) return false;
+  const { data, error } = await client
+    .from("video_likes")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("video_id", videoId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return Boolean(data);
+};
+
+export const hasDislikedVideo = async (videoId: string): Promise<boolean> => {
+  const client = ensureSupabase();
+  const userId = await currentUserId();
+  if (!userId) return false;
+  const { data, error } = await client
+    .from("video_dislikes")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("video_id", videoId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return Boolean(data);
+};
+
+export const getVideoReaction = async (videoId: string): Promise<VideoReaction> => {
+  const [liked, disliked] = await Promise.all([
+    hasLikedVideo(videoId),
+    hasDislikedVideo(videoId),
+  ]);
+  if (liked) return "like";
+  if (disliked) return "dislike";
+  return null;
+};
+
+const removeRow = async (table: "video_likes" | "video_dislikes", videoId: string, userId: string) => {
+  const client = ensureSupabase();
+  const { error } = await client.from(table).delete().eq("user_id", userId).eq("video_id", videoId);
+  if (error) throw new Error(error.message);
+};
+
+const addRow = async (table: "video_likes" | "video_dislikes", videoId: string, userId: string) => {
+  const client = ensureSupabase();
+  const { error } = await client.from(table).insert({ user_id: userId, video_id: videoId });
+  if (error && !`${error.message}`.toLowerCase().includes("duplicate")) throw new Error(error.message);
+};
+
+/**
+ * Toggles the reaction. Like and dislike are mutually exclusive:
+ * liking while disliked removes the dislike first (and vice versa).
+ * Returns the resulting reaction state.
+ */
+export const setVideoReaction = async (
+  videoId: string,
+  next: "like" | "dislike",
+): Promise<VideoReaction> => {
+  const userId = await currentUserId();
+  if (!userId) throw new Error("You must be signed in to rate videos.");
+
+  const current = await getVideoReaction(videoId);
+
+  if (current === next) {
+    await removeRow(next === "like" ? "video_likes" : "video_dislikes", videoId, userId);
+    return null;
+  }
+
+  if (current) {
+    await removeRow(current === "like" ? "video_likes" : "video_dislikes", videoId, userId);
+  }
+  await addRow(next === "like" ? "video_likes" : "video_dislikes", videoId, userId);
+  return next;
+};
