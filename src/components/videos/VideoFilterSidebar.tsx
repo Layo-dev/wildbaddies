@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCount } from "@/lib/format";
 import type { CategoryRecord } from "@/lib/categories";
@@ -106,7 +106,7 @@ const VideoFilterSidebar = ({
         )}
 
         <Link
-          to="/categories"
+          href="/categories"
           className="mt-5 inline-block text-xs font-bold uppercase tracking-widest text-primary hover:opacity-80"
         >
           Browse all categories

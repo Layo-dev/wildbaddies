@@ -191,8 +191,8 @@ export const searchVideoSuggestions = async (
   const q = query.trim();
   if (!q) return [];
 
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+  const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.VITE_SUPABASE_URL) as string | undefined;
+  const supabaseAnonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY) as string | undefined;
   if (!supabaseUrl || !supabaseAnonKey) return [];
 
   const params = new URLSearchParams({
@@ -308,6 +308,51 @@ export const getVideosByCategory = async (
     category: cat as { id: string; name: string; slug: string },
     videos,
   };
+};
+
+export interface TagVideosResult {
+  tag: { id: string; name: string; slug: string } | null;
+  videos: VideoRecord[];
+}
+
+export const getVideosByTag = async (
+  slug: string,
+  sort: VideoSort = "recent",
+): Promise<TagVideosResult> => {
+  const client = ensureSupabase();
+
+  const { data: tag, error: tagErr } = await client
+    .from("tags")
+    .select("id,name,slug")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (tagErr) throw new Error(tagErr.message);
+  if (!tag) return { tag: null, videos: [] };
+
+  const order = sortToOrder(sort);
+  const { data: rows, error: vErr } = await client
+    .from("video_tags")
+    .select(
+      "videos:video_id ( id,title,slug,bunny_video_id,status,playback_url,thumbnail_url,duration_seconds,views,rating,created_at )",
+    )
+    .eq("tag_id", tag.id);
+  if (vErr) throw new Error(vErr.message);
+
+  const videos = ((rows ?? []) as Array<{ videos: VideoRecord | VideoRecord[] | null }>)
+    .flatMap((r) => {
+      const v = r.videos;
+      if (!v) return [];
+      return Array.isArray(v) ? v : [v];
+    })
+    .filter((v): v is VideoRecord => Boolean(v?.id) && v.status === "ready")
+    .sort((a, b) => {
+      const av = (a as unknown as Record<string, unknown>)[order.col];
+      const bv = (b as unknown as Record<string, unknown>)[order.col];
+      if (typeof av === "number" && typeof bv === "number") return bv - av;
+      return String(bv ?? "").localeCompare(String(av ?? ""));
+    });
+
+  return { tag, videos };
 };
 
 // ─── Likes / Dislikes ─────────────────────────────────────────────────────────

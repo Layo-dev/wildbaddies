@@ -1,3 +1,5 @@
+"use client";
+
 import { KeyboardEvent, useMemo, useRef, useState } from "react";
 import { X, Tag as TagIcon } from "lucide-react";
 import type { TagRecord } from "@/lib/tags";

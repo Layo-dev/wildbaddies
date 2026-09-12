@@ -1,5 +1,8 @@
-import { FormEvent, useState } from "react";
+"use client";
+
+import { FormEvent, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Upload as UploadIcon } from "lucide-react";
@@ -13,13 +16,10 @@ import ModelMultiSelect from "@/components/models/ModelMultiSelect";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
-import { Navigate } from "react-router-dom";
 
 const UploadPage = () => {
   const { isAuthenticated, isAdmin, isLoading } = useAuth();
-  if (isLoading) return null;
-  if (!isAuthenticated || !isAdmin) return <Navigate to="/" replace />;
-
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -29,19 +29,28 @@ const UploadPage = () => {
   const [lastVideoId, setLastVideoId] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
+  const authorized = isAuthenticated && isAdmin;
+
+  useEffect(() => {
+    if (!isLoading && !authorized) router.replace("/");
+  }, [isLoading, authorized, router]);
+
   const { data: categories = [], isLoading: categoriesLoading, isError: categoriesError } = useQuery({
     queryKey: ["categories"],
     queryFn: listCategories,
+    enabled: authorized,
   });
 
   const { data: tags = [], isLoading: tagsLoading } = useQuery({
     queryKey: ["tags"],
     queryFn: listTags,
+    enabled: authorized,
   });
 
   const { data: models = [], isLoading: modelsLoading, isError: modelsError } = useQuery({
     queryKey: ["models"],
     queryFn: listModels,
+    enabled: authorized,
   });
 
   const toggleCategory = (id: string) => {
@@ -94,6 +103,8 @@ const UploadPage = () => {
   };
 
   const isPending = uploadMutation.isPending;
+
+  if (isLoading || !authorized) return null;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">

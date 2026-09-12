@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo, useRef, useState } from "react";
 import { ChevronDown, X } from "lucide-react";
 import type { ModelRecord } from "@/lib/models";

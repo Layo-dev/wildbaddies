@@ -1,6 +1,7 @@
+"use client";
+
 import { useEffect } from "react";
-import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -21,15 +22,6 @@ const TagsPage = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <Helmet>
-        <title>Tags | Wild Baddies</title>
-        <meta
-          name="description"
-          content="Browse every Wild Baddies tag from A to Z — find baddies, models, categories and niches, then jump straight to the videos."
-        />
-        <link rel="canonical" href="https://wildbaddies.com/tags" />
-      </Helmet>
-
       <Header />
 
       <main className="flex-1">
@@ -67,7 +59,7 @@ const TagsPage = () => {
                     {group.tags.map((tag) => (
                       <li key={tag.id}>
                         <Link
-                          to={`/search?q=${encodeURIComponent(tag.name)}`}
+                          href={`/search?q=${encodeURIComponent(tag.name)}`}
                           className="text-sm leading-snug text-muted-foreground transition-colors hover:text-primary"
                         >
                           {tag.name}

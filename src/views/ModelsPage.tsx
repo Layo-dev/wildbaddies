@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, Search as SearchIcon, BadgeCheck, Star } from "lucide-react";
 import Header from "@/components/Header";
@@ -15,20 +14,6 @@ const ModelsPage = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Helmet>
-        <title>Models | Wild Baddies</title>
-        <meta
-          name="description"
-          content="Meet the models featured on Wild Baddies — browse verified creators and collabs."
-        />
-        <link rel="canonical" href="https://wildbaddies.com/models" />
-        <meta property="og:title" content="Models | Wild Baddies" />
-        <meta property="og:description" content="Meet the models featured on Wild Baddies." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://wildbaddies.com/models" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
-
       <Header />
 
       <main>

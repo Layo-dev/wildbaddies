@@ -1,6 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { useParams } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import VideoCard from "@/components/VideoCard";
@@ -16,7 +17,8 @@ const SORTS: Array<{ id: VideoSort; label: string }> = [
 ];
 
 const CategoryVideosPage = () => {
-  const { slug = "" } = useParams<{ slug: string }>();
+  const params = useParams();
+  const slug = (typeof params.slug === "string" ? params.slug : "") || "";
   const [sort, setSort] = useState<VideoSort>("recent");
   const [data, setData] = useState<CategoryVideosResult | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,11 +50,6 @@ const CategoryVideosPage = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Helmet>
-        <title>{name ? `${name} Videos | Wild Baddies` : "Wild Baddies"}</title>
-        <meta name="description" content={`Watch the best ${name} videos on Wild Baddies.`} />
-        <link rel="canonical" href={`https://wildbaddies.com/categories/${slug}`} />
-      </Helmet>
       <Header />
       <main>
         <section className="container py-10 sm:py-16">

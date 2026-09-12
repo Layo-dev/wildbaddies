@@ -1,4 +1,5 @@
 import { Eye, Star } from "lucide-react";
+import Link from "next/link";
 
 interface VideoCardProps {
   slug?: string;
@@ -28,7 +29,7 @@ const VideoCard = ({ slug, title, duration, durationSeconds, views, rating, thum
   const fallbackSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "video";
   const videoSlug = slug ?? fallbackSlug;
   return (
-    <a href={`/video/${videoSlug}`} className="group flex flex-col gap-3">
+    <Link href={`/video/${videoSlug}`} className="group flex flex-col gap-3">
       <div className="relative overflow-hidden rounded-lg bg-secondary aspect-video">
         {thumbnailUrl ? (
           <img
@@ -57,7 +58,7 @@ const VideoCard = ({ slug, title, duration, durationSeconds, views, rating, thum
           </span>
         </div>
       </div>
-    </a>
+    </Link>
   );
 };
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import {
   Menu,
@@ -14,7 +16,8 @@ import {
   Tags,
   Users,
 } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import mascot from "@/assets/baddies-mascot.png";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -53,8 +56,8 @@ const Header = () => {
   const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [accountOpen, setAccountOpen] = useState(false);
   const { isAuthenticated, user, logout, isAdmin } = useAuth();
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const openAuth = (mode: AuthMode) => {
     setAuthMode(mode);
@@ -64,13 +67,13 @@ const Header = () => {
 
   const goTo = (path: string) => {
     setAccountOpen(false);
-    navigate(path);
+    router.push(path);
   };
 
   const handleLogout = () => {
     setAccountOpen(false);
     logout();
-    navigate("/");
+    router.push("/");
   };
 
   const visibleNav = navItems.filter((n) => !n.adminOnly || isAdmin);
@@ -79,7 +82,7 @@ const Header = () => {
     <header className="relative z-30 bg-background border-b border-foreground/10">
       <div className="container flex items-center justify-between gap-3 py-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 shrink-0">
+        <Link href="/" className="flex items-center gap-2 shrink-0">
           <span className="text-xl sm:text-2xl font-bold tracking-wide text-foreground">
             WILD BADDIES
           </span>
@@ -111,7 +114,7 @@ const Header = () => {
               >
                 {isAuthenticated ? (
                   <img
-                    src={user?.avatarUrl || mascot}
+                    src={user?.avatarUrl || mascot.src}
                     alt={user?.username || "Account"}
                     className="h-full w-full object-cover"
                   />
@@ -213,7 +216,7 @@ const Header = () => {
                 {/* Drawer header */}
                 <div className="px-6 pt-8 pb-6">
                   <Link
-                    to="/"
+                    href="/"
                     onClick={() => setOpen(false)}
                     className="text-3xl font-bold tracking-wide text-foreground"
                   >
@@ -230,7 +233,7 @@ const Header = () => {
                       return (
                         <li key={item.label}>
                           <Link
-                            to={item.href}
+                            href={item.href}
                             onClick={() => setOpen(false)}
                             className={`flex h-14 items-center gap-4 rounded-2xl px-4 text-base font-medium transition-colors ${
                               active
@@ -253,7 +256,7 @@ const Header = () => {
                     {legalLinks.map((l) => (
                       <Link
                         key={l.label}
-                        to={l.href}
+                        href={l.href}
                         onClick={() => setOpen(false)}
                         className="hover:text-foreground transition-colors"
                       >

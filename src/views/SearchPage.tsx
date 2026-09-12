@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -32,8 +34,8 @@ interface ListVideosResponse {
   pagination: Pagination;
 }
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY;
 
 const SHOW_OPTIONS = [30, 60, 90, 120];
 const SORT_OPTIONS = [
@@ -79,7 +81,7 @@ function getPageWindow(current: number, total: number): (number | "…")[] {
 }
 
 const SearchPage = () => {
-  const [params] = useSearchParams();
+  const params = useSearchParams();
   const q = (params.get("q") ?? "").trim();
 
   const [page, setPage] = useState(1);

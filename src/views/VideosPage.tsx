@@ -1,6 +1,7 @@
+"use client";
+
 import { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -31,7 +32,14 @@ const sortVideos = (videos: VideoRecord[], sort: VideoSort): VideoRecord[] => {
 };
 
 const VideosPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const setSearchParams = (next: Record<string, string> = {}) => {
+    const params = new URLSearchParams(next);
+    const q = params.toString();
+    router.push(q ? `${pathname}?${q}` : pathname);
+  };
   const page = Math.max(1, Number(searchParams.get("page") ?? 1) || 1);
 
   // Filters are UI state only — they never enter the URL (no crawlable combos).
@@ -74,20 +82,6 @@ const VideosPage = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Helmet>
-        <title>Videos | Wild Baddies</title>
-        <meta
-          name="description"
-          content="Browse every video on Wild Baddies — filter by duration and category, sorted by most recent, most viewed or best rated."
-        />
-        <link rel="canonical" href="https://wildbaddies.com/videos" />
-        <meta property="og:title" content="Videos | Wild Baddies" />
-        <meta property="og:description" content="Browse every video on Wild Baddies." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://wildbaddies.com/videos" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
-
       <Header />
 
       <main>

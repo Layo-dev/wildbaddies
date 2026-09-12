@@ -1,7 +1,9 @@
+"use client";
+
 import { useState } from "react";
 import { X, Eye, EyeOff } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 
 export type AuthMode = "login" | "signup";
@@ -192,7 +194,7 @@ const SignupForm = ({ onSwitch, onDone }: { onSwitch: () => void; onDone: () => 
 
       <p className="text-center text-xs text-muted-foreground">
         By signing up, you agree to our{" "}
-        <Link to="/terms-of-service" className="text-primary hover:opacity-90">Terms and Conditions</Link>
+        <Link href="/terms-of-service" className="text-primary hover:opacity-90">Terms and Conditions</Link>
       </p>
 
       <SubmitButton loading={loading}>Sign Up</SubmitButton>

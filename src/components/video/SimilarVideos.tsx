@@ -1,3 +1,5 @@
+"use client";
+
 import VideoCard from "@/components/VideoCard";
 import type { VideoRecord } from "@/lib/videos";
 //import BannerAd from "@/components/BannerAd";

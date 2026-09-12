@@ -35,7 +35,11 @@ const ModelSocialLinks = ({ model }: Props) => {
             aria-label={`${model.name} on ${label}`}
             className="inline-flex h-10 w-10 shrink-0 overflow-hidden rounded-full transition-opacity hover:opacity-85"
           >
-            <img src={icon} alt="" className="h-full w-full object-cover" />
+            <img
+              src={typeof icon === "string" ? icon : icon.src}
+              alt=""
+              className="h-full w-full object-cover"
+            />
           </a>
         );
       })}

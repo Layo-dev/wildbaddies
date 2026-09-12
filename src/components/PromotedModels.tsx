@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react";
 import model from "@/assets/Mya-Mira.jpg";
@@ -7,7 +9,7 @@ import model3 from "@/assets/Sarah-lopez.jpg";
 import model4 from "@/assets/Alice-Thaler.jpg";
 import model5 from "@/assets/Elisa-Rosetti.jpg";
 
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 const models = [
   { name: "Mya Mira" },
@@ -55,14 +57,27 @@ const PromotedModels = () => {
             >
               <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-secondary">
                 <img
-                  src={i === 0 ? model : i === 1 ? model1 : i === 2 ? model2 : i === 3 ? model3 : i === 4 ? model4 : model5}
+                  src={
+                    (i === 0
+                      ? model
+                      : i === 1
+                        ? model1
+                        : i === 2
+                          ? model2
+                          : i === 3
+                            ? model3
+                            : i === 4
+                              ? model4
+                              : model5
+                    ).src
+                  }
                   alt={`${m.name} portrait`}
                   loading="lazy"
                   className="h-full w-full object-cover"
                 />
               </div>
               <Link
-                to={`https://www.profitablecpmratenetwork.com/c3a0rquwhk?key=790012fb156a548d2a45ba0daf15407e${m.name}`}
+                href={`https://www.profitablecpmratenetwork.com/c3a0rquwhk?key=790012fb156a548d2a45ba0daf15407e${m.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-glass inline-flex items-center justify-center gap-1.5 rounded-md py-2 text-sm font-bold uppercase tracking-wide"

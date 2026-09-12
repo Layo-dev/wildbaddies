@@ -1,6 +1,8 @@
+"use client";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import {
   searchVideoSuggestions,
   type VideoSuggestion,
@@ -22,7 +24,7 @@ const SearchBox = ({
   initialQuery = "",
   onSubmit,
 }: SearchBoxProps) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const [debounced, setDebounced] = useState(initialQuery);
   const [suggestions, setSuggestions] = useState<VideoSuggestion[]>([]);
@@ -73,12 +75,12 @@ const SearchBox = ({
     if (!value) return;
     setOpen(false);
     onSubmit?.(value);
-    navigate(`/search?q=${encodeURIComponent(value)}`);
+    router.push(`/search?q=${encodeURIComponent(value)}`);
   };
 
   const goToVideo = (slug: string) => {
     setOpen(false);
-    navigate(`/video/${slug}`);
+    router.push(`/video/${slug}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

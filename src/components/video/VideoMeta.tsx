@@ -1,24 +1,30 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
-import { listVideoCategories } from "@/lib/videos";
-import { getVideoModels } from "@/lib/models";
+import { listVideoCategories, type VideoCategory } from "@/lib/videos";
+import { getVideoModels, type ModelRecord } from "@/lib/models";
 
 interface VideoMetaProps {
   videoId?: string;
+  initialCategories?: VideoCategory[];
+  initialModels?: ModelRecord[];
 }
 
-const VideoMeta = ({ videoId }: VideoMetaProps) => {
-  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
+const VideoMeta = ({ videoId, initialCategories, initialModels }: VideoMetaProps) => {
+  const { data: categories = initialCategories ?? [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["video-categories", videoId],
     queryFn: () => listVideoCategories(videoId as string),
     enabled: Boolean(videoId),
+    initialData: initialCategories,
   });
 
-  const { data: models = [], isLoading: modelsLoading } = useQuery({
+  const { data: models = initialModels ?? [], isLoading: modelsLoading } = useQuery({
     queryKey: ["video-models", videoId],
     queryFn: () => getVideoModels(videoId as string),
     enabled: Boolean(videoId),
+    initialData: initialModels,
   });
 
   return (
@@ -39,7 +45,7 @@ const VideoMeta = ({ videoId }: VideoMetaProps) => {
             {models.map((m) => (
               <Link
                 key={m.id}
-                to={`/models/${m.slug}`}
+                href={`/models/${m.slug}`}
                 className="inline-flex items-center gap-2 rounded-full border border-primary2/30 bg-secondary/30 py-1 pl-1 pr-3 text-sm font-bold text-primary2 transition-colors hover:bg-primary2/15"
               >
                 <span className="h-7 w-7 shrink-0 overflow-hidden rounded-full bg-secondary">
@@ -73,7 +79,7 @@ const VideoMeta = ({ videoId }: VideoMetaProps) => {
         ) : (
           <div className="flex flex-wrap gap-2">
             {categories.map((c) => (
-              <Link key={c.id} to={`/categories/${c.slug}`} className="chip hover:bg-primary/20 transition-colors">
+              <Link key={c.id} href={`/categories/${c.slug}`} className="chip hover:bg-primary/20 transition-colors">
                 {c.name}
               </Link>
             ))}

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import type { ModelRecord } from "@/lib/models";
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
 }
 
 const ModelCard = ({ model, rank }: Props) => (
-  <Link to={`/models/${model.slug}`} className="group flex flex-col gap-2">
+  <Link href={`/models/${model.slug}`} className="group flex flex-col gap-2">
     <div className="relative overflow-hidden rounded-xl bg-secondary aspect-[3/4]">
       {model.thumbnail_url ? (
         <img

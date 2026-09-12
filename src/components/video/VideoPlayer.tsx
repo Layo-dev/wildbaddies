@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Maximize } from "lucide-react";
 import { PlayIcon, Cog6ToothIcon, SpeakerWaveIcon, SpeakerXMarkIcon, PauseIcon } from "@heroicons/react/24/solid";

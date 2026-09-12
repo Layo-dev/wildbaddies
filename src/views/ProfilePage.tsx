@@ -1,5 +1,8 @@
-import { useMemo } from "react";
-import { Navigate, Link } from "react-router-dom";
+"use client";
+
+import { useEffect, useMemo } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChevronDown, Info } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -28,15 +31,18 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => (
 
 const ProfilePage = () => {
   const { user, isAuthenticated } = useAuth();
+  const router = useRouter();
 
   const joined = useMemo(
     () => (user ? formatJoined(user.joinedAt) : ""),
     [user],
   );
 
-  if (!isAuthenticated || !user) {
-    return <Navigate to="/" replace />;
-  }
+  useEffect(() => {
+    if (!isAuthenticated || !user) router.replace("/");
+  }, [isAuthenticated, user, router]);
+
+  if (!isAuthenticated || !user) return null;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -48,7 +54,7 @@ const ProfilePage = () => {
           <div className="flex flex-col items-center text-center">
             <div className="h-32 w-32 sm:h-40 sm:w-40 rounded-md overflow-hidden bg-secondary border border-border">
               <img
-                src={user.avatarUrl || mascot}
+                src={user.avatarUrl || mascot.src}
                 alt={`${user.username} avatar`}
                 className="h-full w-full object-cover"
               />
@@ -110,7 +116,7 @@ const ProfilePage = () => {
 
             <div className="py-16 text-center text-sm text-muted-foreground">
               You have no messages yet.{" "}
-              <Link to="/" className="text-primary hover:opacity-90">
+              <Link href="/" className="text-primary hover:opacity-90">
                 Discover videos
               </Link>
             </div>

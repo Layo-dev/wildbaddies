@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CategoryCard from "@/components/CategoryCard";
@@ -31,11 +30,6 @@ const CategoriesPage = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Helmet>
-        <title>Categories | Wild Baddies</title>
-        <meta name="description" content="Explore Wild Baddies categories — free Latina, Ebony, Thick, Amateur and OnlyFans baddies porn videos. New explicit clips every day. Browse and watch." />
-        <link rel="canonical" href="https://wildbaddies.com/categories" />
-      </Helmet>
       <Header />
       <main>
         <section className="container py-10 sm:py-16">

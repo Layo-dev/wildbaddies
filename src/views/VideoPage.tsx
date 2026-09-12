@@ -1,8 +1,9 @@
-import { useParams } from "react-router-dom";
+"use client";
+
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { Eye, Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PromotedModels from "@/components/PromotedModels";
@@ -31,7 +32,8 @@ const formatDuration = (seconds: number | null | undefined): string | undefined 
 const BASE_URL = "https://wildbaddies.com";
 
 const VideoPage = () => {
-  const { slug } = useParams();
+  const params = useParams();
+  const slug = typeof params.slug === "string" ? params.slug : undefined;
   const [shareOpen, setShareOpen] = useState(false);
 
   const { data: video, isLoading, isError, error } = useQuery({
@@ -93,59 +95,6 @@ const VideoPage = () => {
     <div className="min-h-screen bg-background text-foreground">
 
       {/* Always render Helmet — fallback values before video loads */}
-      <Helmet>
-        <title>{pageTitle}</title>
-        <meta name="description" content={pageDescription} />
-        <link rel="canonical" href={canonicalUrl} />
-
-        {/* Open Graph */}
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={pageDescription} />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:type" content="video.other" />
-        {video?.thumbnail_url && (
-          <meta property="og:image" content={video.thumbnail_url} />
-        )}
-        {video?.playback_url && (
-          <meta property="og:video" content={video.playback_url} />
-        )}
-
-        {/* TWITTER / X PLAYER CARD */}
-        {video ? (
-          <>
-            <meta name="twitter:card" content="player" />
-            <meta name="twitter:site" content="@WildBaddies" />
-            <meta name="twitter:title" content={video.title} />
-            <meta name="twitter:description" content={`${video.title} - Watch now on Wild Baddies 🔥`} />
-            
-            {/* Large preview image (with play icon recommended) */}
-            {video.thumbnail_url && (
-              <meta name="twitter:image" content={video.thumbnail_url} />
-            )}
-
-            {/* Player settings - Critical for inline video preview */}
-            <meta name="twitter:player" content={`${canonicalUrl}/embed`} /> {/* Or your clean embed URL */}
-            <meta name="twitter:player:width" content="720" />
-            <meta name="twitter:player:height" content="1280" /> {/* Vertical looks better on mobile */}
-            {video.playback_url && (
-              <meta name="twitter:player:stream" content={video.playback_url} />
-            )}
-          </>
-        ) : (
-          /* Fallback while loading */
-          <>
-            <meta name="twitter:card" content="summary_large_image" />
-            <meta name="twitter:title" content={pageTitle} />
-            <meta name="twitter:description" content={pageDescription} />
-          </>
-        )}
-
-        {/* JSON-LD */}
-        {jsonLd && (
-          <script type="application/ld+json">{jsonLd}</script>
-        )}
-      </Helmet>
-
       <Header />
       <main>
         <section className="container pt-6 sm:pt-10 pb-4">
