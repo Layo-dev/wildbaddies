@@ -2,6 +2,6 @@ export {};
 
 declare global {
   interface Window {
-    AdProvider?: any;
+    AdProvider?: Array<Record<string, unknown>>;
   }
 }

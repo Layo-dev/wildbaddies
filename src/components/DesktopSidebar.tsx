@@ -1,4 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Home, LayoutGrid, Bookmark, Heart, User, Upload, Tags, Video, Users } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -24,7 +27,7 @@ const legalLinks = [
 ];
 
 const DesktopSidebar = () => {
-  const { pathname } = useLocation();
+  const pathname = usePathname();
   const { isAdmin } = useAuth();
   const visibleNav = navItems.filter((n) => !n.adminOnly || isAdmin);
 
@@ -49,7 +52,7 @@ const DesktopSidebar = () => {
             return (
               <li key={item.label}>
                 <Link
-                  to={item.href}
+                  href={item.href}
                   className={`flex h-12 items-center gap-4 rounded-2xl px-3 text-sm font-medium transition-colors ${
                     active
                       ? "bg-foreground/10 text-foreground"
@@ -71,7 +74,7 @@ const DesktopSidebar = () => {
       <div className="shrink-0 px-4 py-5 border-t border-foreground/10 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-150">
         <div className="flex flex-wrap gap-x-3 gap-y-2 text-[11px] uppercase tracking-widest text-foreground/60">
           {legalLinks.map((l) => (
-            <Link key={l.label} to={l.to} className="hover:text-foreground transition-colors whitespace-nowrap">
+            <Link key={l.label} href={l.to} className="hover:text-foreground transition-colors whitespace-nowrap">
               {l.label}
             </Link>
           ))}

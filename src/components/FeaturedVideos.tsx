@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment, useEffect, useMemo, useState } from "react";
 import VideoCard from "./VideoCard";
 import VideoCardSkeleton from "./VideoCardSkeleton";
@@ -9,7 +11,7 @@ import { getVideosByCategory } from "@/lib/videos";
 //import BannerAd from "@/components/BannerAd";
 import AdsterraNativeBanner from "@/components/AdsterraNativeBanner";
 import AdsterraNativeBanner2 from "@/components/AdsterraNativeBanner2";
-import { useSearchParams } from "react-router-dom";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Video {
   id: string;
@@ -38,8 +40,8 @@ interface ListVideosResponse {
 }
 
 // ─── API ──────────────────────────────────────────────────────────────────────
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY;
 
 async function fetchVideos(
   page: number,
@@ -121,7 +123,16 @@ const sortToCategorySort = (s: string): "recent" | "viewed" | "rated" => {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const FeaturedVideos = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const setSearchParams = (next: string | Record<string, string>) => {
+    const q =
+      typeof next === "string"
+        ? next
+        : new URLSearchParams(next).toString();
+    router.push(q ? `${pathname}?${q}` : pathname);
+  };
   const [page, setPage] = useState(() => parseFeaturedVideosSearchParams(searchParams).page);
   const [limit, setLimit] = useState(() => parseFeaturedVideosSearchParams(searchParams).limit);
   const [sort, setSort] = useState(() => parseFeaturedVideosSearchParams(searchParams).sort);

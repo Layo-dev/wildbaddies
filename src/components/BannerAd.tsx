@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef } from "react";
 
 interface BannerAdProps {
@@ -31,10 +33,8 @@ const BannerAd = ({ zoneId }: BannerAdProps) => {
     adRef.current.appendChild(ins);
 
     // Serve ad
-    (
-      (window as any).AdProvider =
-        (window as any).AdProvider || []
-    ).push({
+    const win = window as Window & { AdProvider?: Array<Record<string, unknown>> };
+    (win.AdProvider = win.AdProvider || []).push({
       serve: {},
     });
   }, [zoneId]);

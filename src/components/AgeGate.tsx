@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "age_verified";
@@ -41,7 +43,9 @@ const AgeGate = () => {
   const enter = () => {
     try {
       localStorage.setItem(STORAGE_KEY, "1");
-    } catch {}
+    } catch {
+      // ignore storage failures
+    }
     setOpen(false);
   };
 

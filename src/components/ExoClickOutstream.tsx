@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 
 export default function ExoClickOutstream() {
@@ -9,10 +11,8 @@ export default function ExoClickOutstream() {
     document.body.appendChild(providerScript);
 
     providerScript.onload = () => {
-      (
-        (window as any).AdProvider =
-          (window as any).AdProvider || []
-      ).push({
+      const win = window as Window & { AdProvider?: Array<Record<string, unknown>> };
+      (win.AdProvider = win.AdProvider || []).push({
         serve: {},
       });
     };

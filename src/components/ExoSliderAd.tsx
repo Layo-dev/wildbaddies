@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 
 export default function ExoSliderAd() {
@@ -17,7 +19,9 @@ export default function ExoSliderAd() {
         (window.AdProvider = window.AdProvider || []).push({
           serve: {},
         });
-      } catch {}
+      } catch {
+        // ignore ad provider errors
+      }
     }, 500);
   }, []);
 
