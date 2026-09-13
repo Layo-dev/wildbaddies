@@ -44,14 +44,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: `${video.title} - Watch now on Wild Baddies`,
       images: video.thumbnail_url ? [video.thumbnail_url] : undefined,
     },
-    //other: video.playback_url
-      //? {
-          //"twitter:player": `${canonical}/embed`,
-          //"twitter:player:width": "720",
-          //"twitter:player:height": "1280",
-          //"twitter:player:stream": video.playback_url,
-        //}
-      //: undefined,
+    other: video.playback_url
+      ? {
+          "twitter:player": `${canonical}/embed`,
+          "twitter:player:width": "720",
+          "twitter:player:height": "1280",
+          "twitter:player:stream": video.playback_url,
+        }
+      : undefined,
   };
 }
 
