@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       videos: video.playback_url ? [video.playback_url] : undefined,
     },
     twitter: {
-      card: "player",
+      card: "summary_large_image",
       //site: "@WildBaddies",
       title: video.title,
       description: `${video.title} - Watch now on Wild Baddies`,
