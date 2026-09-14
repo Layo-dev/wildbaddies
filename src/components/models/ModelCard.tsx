@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ModelRecord } from "@/lib/models";
 
@@ -10,10 +11,11 @@ const ModelCard = ({ model, rank }: Props) => (
   <Link href={`/models/${model.slug}`} className="group flex flex-col gap-2">
     <div className="relative overflow-hidden rounded-xl bg-secondary aspect-[3/4]">
       {model.thumbnail_url ? (
-        <img
+        <Image
           src={model.thumbnail_url}
           alt={`${model.name} portrait`}
-          loading="lazy"
+          fill
+          sizes="(min-width: 1280px) 16vw, (min-width: 1024px) 20vw, (min-width: 640px) 25vw, 50vw"
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       ) : (

@@ -1,4 +1,5 @@
 import { Eye, Star } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 interface VideoCardProps {
@@ -32,10 +33,11 @@ const VideoCard = ({ slug, title, duration, durationSeconds, views, rating, thum
     <Link href={`/video/${videoSlug}`} className="group flex flex-col gap-3">
       <div className="relative overflow-hidden rounded-lg bg-secondary aspect-video">
         {thumbnailUrl ? (
-          <img
+          <Image
             src={thumbnailUrl}
             alt={`${title} thumbnail`}
-            loading="lazy"
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
