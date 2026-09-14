@@ -56,7 +56,7 @@ export default async function ModelsRoute() {
                 <Star className="h-4 w-4" /> Collab
               </span>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-bold uppercase tracking-wide text-primary">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-bold uppercase tracking-wide text-primary2">
               <span className="inline-flex items-center gap-1">
                 Most Viewed <ChevronDown className="h-4 w-4" />
               </span>
