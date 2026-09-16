@@ -29,7 +29,7 @@ const VideoFilterSidebar = ({
   return (
     <aside className="w-full lg:w-[260px] shrink-0">
       {/* Duration */}
-      <div>
+      {/*<div>
         <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
           Duration <span className="text-muted-foreground font-normal">minutes</span>
         </h2>
@@ -61,7 +61,7 @@ const VideoFilterSidebar = ({
             </button>
           ))}
         </div>
-      </div>
+      </div>*/}
 
       {/* Categories */}
       <div className="mt-10">
