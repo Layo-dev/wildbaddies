@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PromotedModels from "@/components/PromotedModels";
 import SimilarVideos from "@/components/video/SimilarVideos";
+import MobileTopBanner from "@/components/MobileTopBanner";
 import VideoWatchClient from "@/components/video/VideoWatchClient";
 import { getVideoBySlug, listVideoCategories, getVideosByCategory } from "@/lib/videos";
 import { getVideoModels } from "@/lib/models";
@@ -103,6 +104,7 @@ export default async function VideoRoute({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Header />
+      <MobileTopBanner />
       <main>
         <section className="container pt-6 sm:pt-10 pb-4">
           <h1 className="text-3xl sm:text-5xl font-bold text-white uppercase tracking-tight">
