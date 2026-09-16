@@ -80,7 +80,7 @@ const VideoFilterSidebar = ({
                 type="button"
                 onClick={() => onCategoryChange(null)}
                 className={`text-sm transition-colors ${
-                  activeCategory === null ? "text-primary font-bold" : "text-foreground/85 hover:text-primary"
+                  activeCategory === null ? "text-primary2 font-bold" : "text-foreground/85 hover:text-primary2"
                 }`}
               >
                 All Videos
@@ -93,8 +93,8 @@ const VideoFilterSidebar = ({
                   onClick={() => onCategoryChange(c.slug)}
                   className={`text-sm text-left transition-colors ${
                     activeCategory === c.slug
-                      ? "text-primary font-bold"
-                      : "text-foreground/85 hover:text-primary"
+                      ? "text-primary2 font-bold"
+                      : "text-foreground/85 hover:text-primary2"
                   }`}
                 >
                   {c.name}
