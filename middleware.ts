@@ -18,16 +18,23 @@ function isBot(userAgent: string): boolean {
 }
 
 export async function middleware(request: NextRequest) {
-  // 1. Initialize the response chain
-  let supabaseResponse = NextResponse.next({ request });
-  
   const userAgent = request.headers.get("user-agent") || "";
-  
+
   // Robust checking logic: check standard cookies AND fallback to raw headers for edge layers
   const rawCookies = request.headers.get("cookie") || "";
   const hasAgeCookie = request.cookies.has(AGE_COOKIE_NAME) || rawCookies.includes(`${AGE_COOKIE_NAME}=1`);
-  
+
   const isAgeVerified = hasAgeCookie || isBot(userAgent);
+
+  // IMPORTANT: this header must be set on the REQUEST, not the response.
+  // Server Components read headers() from the incoming request, so a header
+  // set only on the outgoing response never reaches layout.tsx/page.tsx —
+  // that was causing `isVerified` to always come back false there.
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-age-verified", isAgeVerified ? "true" : "false");
+
+  // 1. Initialize the response chain, forwarding the modified request headers
+  let supabaseResponse = NextResponse.next({ request: { headers: requestHeaders } });
 
   // 2. Run Supabase Session Ring
   const supabaseUrl =
@@ -43,7 +50,7 @@ export async function middleware(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({ request });
+          supabaseResponse = NextResponse.next({ request: { headers: requestHeaders } });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options),
           );
@@ -54,9 +61,9 @@ export async function middleware(request: NextRequest) {
     await supabase.auth.getUser();
   }
 
-  // 3. Inject validation configurations
+  // 3. Also mirror it onto the response, in case anything reads it client-side
   supabaseResponse.headers.set("x-age-verified", isAgeVerified ? "true" : "false");
-  
+
   // 4. CRITICAL CRACK FOR LIVE PREVIEWS: Disable middleware caching completely 
   supabaseResponse.headers.set("x-middleware-cache", "no-cache");
 
