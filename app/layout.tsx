@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Roboto_Condensed } from "next/font/google";
+import { headers } from "next/headers"; // Added to read the backend header values
 import Script from "next/script";
+import AgeGate from "@/components/AgeGate"; // Make sure this path matches your directory setup
 import Providers from "./providers";
 import "./globals.css";
 
@@ -54,7 +56,13 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.jpg" },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // 1. Unpack header list asynchronously 
+  const headersList = await headers();
+  
+  // 2. Safely capture the custom header set by your unified Supabase + AgeGate middleware
+  const isVerified = headersList.get("x-age-verified") === "true";
+
   return (
     <html lang="en" className={robotoCondensed.variable}>
       <body className="min-h-screen bg-background text-foreground font-sans antialiased">
@@ -70,6 +78,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             gtag('config', 'G-LQRZSSYPRG');
           `}
         </Script>
+        
+        {/* 3. Mount the AgeGate system and feed it the server-side validation state to block layout flashes */}
+        <AgeGate initialVerified={isVerified} />
+        
         <Providers>{children}</Providers>
       </body>
     </html>
