@@ -22,7 +22,11 @@ export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
   
   const userAgent = request.headers.get("user-agent") || "";
-  const hasAgeCookie = request.cookies.has(AGE_COOKIE_NAME);
+  
+  // Robust checking logic: check standard cookies AND fallback to raw headers for edge layers
+  const rawCookies = request.headers.get("cookie") || "";
+  const hasAgeCookie = request.cookies.has(AGE_COOKIE_NAME) || rawCookies.includes(`${AGE_COOKIE_NAME}=1`);
+  
   const isAgeVerified = hasAgeCookie || isBot(userAgent);
 
   // 2. Run Supabase Session Ring
@@ -39,10 +43,7 @@ export async function middleware(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          
-          // WARNING: This re-initialization wipes headers clean!
           supabaseResponse = NextResponse.next({ request });
-          
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options),
           );
@@ -53,12 +54,15 @@ export async function middleware(request: NextRequest) {
     await supabase.auth.getUser();
   }
 
-  // 3. CRITICAL: Inject the header at the VERY END so it survives the Supabase reset
+  // 3. Inject validation configurations
   supabaseResponse.headers.set("x-age-verified", isAgeVerified ? "true" : "false");
+  
+  // 4. CRITICAL CRACK FOR LIVE PREVIEWS: Disable middleware caching completely 
+  supabaseResponse.headers.set("x-middleware-cache", "no-cache");
 
   return supabaseResponse;
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.jpg|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.jpg|.*\\.(?:svg|png|jpg|jpeg|gif|webp)\$).*)"],
 };

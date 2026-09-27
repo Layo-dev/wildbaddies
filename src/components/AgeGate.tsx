@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const COOKIE_NAME = "age_verified";
 
@@ -45,7 +46,7 @@ interface AgeGateProps {
 const AgeGate = ({ initialVerified = false }: AgeGateProps) => {
   // Use backend header hint if available to reduce hydration discrepancies
   const [open, setOpen] = useState(!initialVerified);
-
+  const router = useRouter();
   useEffect(() => {
     // Never show gate to search bots
     if (isBot()) {
@@ -64,10 +65,25 @@ const AgeGate = ({ initialVerified = false }: AgeGateProps) => {
   if (!open) return null;
 
   const enter = () => {
-    // Set cookie valid for 30 days
-    setCookie(COOKIE_NAME, "1", 30);
+    const date = new Date();
+    date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000); // Valid for 30 Days
+    
+    // Automatically strip preview subdomains so cookie applies across the whole domain cluster
+    const hostname = window.location.hostname;
+    const domainParts = hostname.split('.');
+    const cookieDomain = domainParts.length > 2 ? `domain=.${domainParts.slice(-2).join('.')};` : '';
+    
+    const secure = window.location.protocol === "https:" ? "Secure;" : "";
+    
+    // Format string with broad domain validation matching
+    document.cookie = `${COOKIE_NAME}=1; expires=${date.toUTCString()}; path=/; ${cookieDomain} SameSite=Lax; ${secure}`;
+  
     setOpen(false);
+  
+    // Re-sync server layout instantly
+    router.refresh();
   };
+  
 
   const exit = () => {
     window.location.href = "https://www.google.com";
