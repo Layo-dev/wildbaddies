@@ -7,6 +7,7 @@ export interface VideoRecord {
   id: string;
   title: string;
   slug: string;
+  meta_description?: string | null;
   bunny_video_id: string;
   status: VideoStatus;
   playback_url: string | null;
@@ -40,7 +41,7 @@ export const getVideoBySlug = async (slug: string): Promise<VideoRecord | null> 
   const client = ensureSupabase();
   const { data, error } = await client
     .from("videos")
-    .select("id,title,slug,bunny_video_id,status,playback_url,thumbnail_url,duration_seconds,views,rating,created_at")
+    .select("id,title,slug,meta_description,bunny_video_id,status,playback_url,thumbnail_url,duration_seconds,views,rating,created_at")
     .eq("slug", slug)
     .maybeSingle();
 

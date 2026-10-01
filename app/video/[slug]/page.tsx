@@ -17,13 +17,16 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+const getVideoDescription = (video: { title: string; meta_description?: string | null }) =>
+  video.meta_description || `Watch ${video.title} on Wild Baddies. Free adult videos updated daily.`;
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const video = await getVideoBySlug(slug);
   if (!video) return { title: "Video not found" };
 
   const title = `${video.title} | Wild Baddies`;
-  const description = `Watch ${video.title} on Wild Baddies. Free adult videos updated daily.`;
+  const description = getVideoDescription(video);
   const canonical = `${SITE_URL}/video/${slug}`;
 
   return {
@@ -42,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       //site: "@WildBaddies",
       title: video.title,
-      description: `${video.title} - Watch now on Wild Baddies`,
+      description : `${video.title} - watch now on Wild Baddies.`,
       images: video.thumbnail_url ? [video.thumbnail_url] : undefined,
     },
     //other: video.playback_url
@@ -75,11 +78,12 @@ export default async function VideoRoute({ params }: Props) {
     .slice(0, 6);
 
   const canonicalUrl = `${SITE_URL}/video/${slug}`;
+  const description = getVideoDescription(video);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "VideoObject",
     name: video.title,
-    description: `Watch ${video.title} on Wild Baddies. Free adult videos.`,
+    description,
     thumbnailUrl: video.thumbnail_url,
     uploadDate: new Date(video.created_at).toISOString(),
     duration: formatDurationIso(video.duration_seconds),
