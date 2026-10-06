@@ -8,6 +8,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/context/AuthContext";
 import AdsterraSocialBar from "@/components/AdsterraSocialBar";
 import DesktopSidebar from "@/components/DesktopSidebar";
+import AdsterraPopunder from "@/components/AdsterraPopunder";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
@@ -19,6 +20,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           <Toaster />
           <Sonner />
           <AdsterraSocialBar />
+          <AdsterraPopunder />
           <DesktopSidebar />
           <div className="md:pl-16">{children}</div>
         </TooltipProvider>
