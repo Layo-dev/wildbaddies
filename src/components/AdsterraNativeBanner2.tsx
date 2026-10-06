@@ -1,25 +1,32 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function AdsterraNativeBanner2() {
-  useEffect(() => {
-    const script = document.createElement("script");
+  const containerRef = useRef<HTMLDivElement>(null);
 
-    script.src =
-      "https://pl29553411.effectivecpmnetwork.com/abe4dd805f7bc20ef3d38e3bb6ce7c14/invoke.js";
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const script = document.createElement("script");
 
     script.async = true;
     script.setAttribute("data-cfasync", "false");
+    script.src =
+      "https://biomanos.org/21/abe4dd805f7bc20ef3d38e3bb6ce7c14";
 
-    document.body.appendChild(script);
+    container.appendChild(script);
 
     return () => {
-      script.remove();
+      container.innerHTML = "";
     };
   }, []);
 
   return (
-    <div id="container-abe4dd805f7bc20ef3d38e3bb6ce7c14" />
+    <div
+      ref={containerRef}
+      id="container-abe4dd805f7bc20ef3d38e3bb6ce7c14"
+    />
   );
 }
