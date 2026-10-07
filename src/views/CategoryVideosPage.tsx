@@ -84,7 +84,7 @@ const CategoryVideosPage = () => {
           </div>
 
           {/* Grid 3-2-1 */}
-          <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-6 -mx-4 sm:mx-0">
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {loading &&
               Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="flex flex-col gap-3">
