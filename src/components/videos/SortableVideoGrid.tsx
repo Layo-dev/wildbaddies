@@ -55,7 +55,7 @@ export default function SortableVideoGrid({ videos, emptyMessage = "No videos ye
         </button>
       </div>
 
-      <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+      <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8">
         {sorted.map((v) => (
           <VideoCard
             key={v.id}
