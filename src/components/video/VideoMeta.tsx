@@ -79,7 +79,7 @@ const VideoMeta = ({ videoId, initialCategories, initialModels }: VideoMetaProps
         ) : (
           <div className="flex flex-wrap gap-2">
             {categories.map((c) => (
-              <Link key={c.id} href={`/categories/${c.slug}`} className="chip hover:bg-primary/20 transition-colors">
+              <Link key={c.id} href={`/categories/${c.slug}`} className="chip hover:bg-primary2/15 transition-colors">
                 {c.name}
               </Link>
             ))}
