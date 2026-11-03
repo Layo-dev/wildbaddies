@@ -16,17 +16,14 @@ export default function AdsterraPopunder() {
     const script = document.createElement("script");
 
     script.src =
-      "https://pl29294403.effectivecpmnetwork.com/d6/6f/30/d66f308ad9198692935e82c713ee59ed.js";
+      "https://benchform.org/1/d66f308ad9198692935e82c713ee59ed";
 
     script.async = true;
+    script.setAttribute("data-cfasync", "false");
 
     document.body.appendChild(script);
 
     window.adsterraLoaded = true;
-
-    return () => {
-      // optional cleanup
-    };
   }, []);
 
   return null;

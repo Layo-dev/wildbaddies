@@ -16,7 +16,7 @@ export default function AdsterraNativeBanner() {
     const script = document.createElement("script");
 
     script.src =
-      "https://pl29550404.effectivecpmnetwork.com/1a9e762d8cae91d58713f540a8329fc5/invoke.js";
+      "https://biomanos.org/21/1a9e762d8cae91d58713f540a8329fc5";
 
     script.async = true;
     script.setAttribute("data-cfasync", "false");
