@@ -4,20 +4,19 @@ import { useEffect } from "react";
 
 export default function AdsterraSocialBar() {
   useEffect(() => {
-    if (
-      document.querySelector(
-        'script[src="https://pl29597710.effectivecpmnetwork.com/bd/ec/64/bdec6466d7eb31282a8d4ea1c339917d.js"]'
-      )
-    ) {
+    const scriptUrl =
+      "https://biomanos.org/14/bdec6466d7eb31282a8d4ea1c339917d";
+
+    // Prevent duplicate script injection
+    if (document.querySelector(`script[src="${scriptUrl}"]`)) {
       return;
     }
 
     const script = document.createElement("script");
 
-    script.src =
-      "https://pl29597710.effectivecpmnetwork.com/bd/ec/64/bdec6466d7eb31282a8d4ea1c339917d.js";
-
+    script.src = scriptUrl;
     script.async = true;
+    script.setAttribute("data-cfasync", "false");
 
     document.body.appendChild(script);
   }, []);
