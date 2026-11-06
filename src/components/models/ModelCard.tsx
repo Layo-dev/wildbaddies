@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Eye } from "lucide-react";
 import type { ModelRecord } from "@/lib/models";
+import { formatCount } from "@/lib/format";
 
 interface Props {
   model: ModelRecord;
@@ -27,9 +29,13 @@ const ModelCard = ({ model, rank }: Props) => (
       <h3 className="truncate text-sm font-bold text-foreground transition-colors group-hover:text-primary2">
         <span className="text-primary">#{rank}</span> {model.name}
       </h3>
-      {model.bio && (
-        <p className="mt-0.5 truncate text-xs text-muted-foreground">{model.bio}</p>
-      )}
+      <div className="mt-0.5 flex items-center justify-center gap-3 text-sm text-muted-foreground">
+        <span>{formatCount(model.video_count ?? 0)} videos</span>
+        <span className="inline-flex items-center gap-1">
+          <Eye className="h-3 w-3" />
+          {formatCount(model.total_views ?? 0)}
+        </span>
+      </div>
     </div>
   </Link>
 );

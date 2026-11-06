@@ -10,6 +10,7 @@ export interface ModelRecord {
   is_active: boolean;
   created_at: string | null;
   video_count: number | null;
+  total_views: number | null;
   subscribers_count: number | null;
   profile_views: number | null;
   instagram_url: string | null;
@@ -60,6 +61,7 @@ export const mapModelRow = (row: Record<string, unknown>): ModelRecord => {
     is_active: Boolean(row.is_active ?? true),
     created_at: (row.created_at as string | null) ?? null,
     video_count: toNumber(row.video_count ?? row.videos_count ?? row.count),
+    total_views: toNumber(row.total_views),
     subscribers_count: toNumber(row.subscribers_count ?? row.subscriber_count),
     profile_views: toNumber(row.profile_views ?? row.profile_view_count),
     instagram_url: toUrl(row.instagram_url),
@@ -125,7 +127,50 @@ export const listModels = async (): Promise<ModelRecord[]> => {
     .order("name", { ascending: true });
 
   if (error) throw new Error(error.message);
-  return (data ?? []).map((row) => mapModelRow(row as Record<string, unknown>));
+  const models = (data ?? []).map((row) => mapModelRow(row as Record<string, unknown>));
+  if (models.length === 0) return models;
+
+  const videoStats = new Map<string, { count: number; totalViews: number }>();
+  const pageSize = 1000;
+  for (let offset = 0; ; offset += pageSize) {
+    const { data: videoRows, error: videoError } = await client
+      .from("video_models")
+      .select("model_id, video_id, videos:video_id ( status, views )")
+      .in("model_id", models.map((model) => model.id))
+      .order("model_id")
+      .order("video_id")
+      .range(offset, offset + pageSize - 1);
+
+    if (videoError) throw new Error(videoError.message);
+
+    const rows = (videoRows ?? []) as Array<{
+      model_id: string;
+      videos:
+        | { status: string | null; views: number | null }
+        | { status: string | null; views: number | null }[]
+        | null;
+    }>;
+    for (const row of rows) {
+      const linkedVideos = row.videos ? (Array.isArray(row.videos) ? row.videos : [row.videos]) : [];
+      for (const video of linkedVideos) {
+        if (!video || video.status !== "ready") continue;
+        const stats = videoStats.get(row.model_id) ?? { count: 0, totalViews: 0 };
+        stats.count += 1;
+        stats.totalViews += video.views ?? 0;
+        videoStats.set(row.model_id, stats);
+      }
+    }
+    if (rows.length < pageSize) break;
+  }
+
+  return models.map((model) => {
+    const stats = videoStats.get(model.id);
+    return {
+      ...model,
+      video_count: model.video_count ?? stats?.count ?? 0,
+      total_views: stats?.totalViews ?? 0,
+    };
+  });
 };
 
 export const getVideoModels = async (videoId: string): Promise<ModelRecord[]> => {
