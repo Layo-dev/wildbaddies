@@ -1,13 +1,14 @@
 "use client";
 
 import { Fragment, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import VideoCard from "./VideoCard";
 import VideoCardSkeleton from "./VideoCardSkeleton";
 import Pagination from "./videos/Pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { listCategories, type CategoryRecord } from "@/lib/categories";
-import { getVideosByCategory, listVideos, type VideoRecord } from "@/lib/videos";
+import { listVideos, type VideoRecord } from "@/lib/videos";
 //import BannerAd from "@/components/BannerAd";
 import AdsterraNativeBanner from "@/components/AdsterraNativeBanner";
 import AdsterraNativeBanner2 from "@/components/AdsterraNativeBanner2";
@@ -26,13 +27,11 @@ const COLLAPSED_CHIPS_COUNT = 8;
 interface FeaturedVideosState {
   page: number;
   sort: string;
-  selectedCategory: string;
 }
 
 const DEFAULT_FEATURED_VIDEOS_STATE: FeaturedVideosState = {
   page: 1,
   sort: "newest",
-  selectedCategory: "all",
 };
 
 export function parseFeaturedVideosSearchParams(search: string | URLSearchParams): FeaturedVideosState {
@@ -40,12 +39,10 @@ export function parseFeaturedVideosSearchParams(search: string | URLSearchParams
 
   const page = Number.parseInt(params.get("page") ?? "", 10);
   const sort = params.get("sort") ?? DEFAULT_FEATURED_VIDEOS_STATE.sort;
-  const selectedCategory = params.get("category") ?? DEFAULT_FEATURED_VIDEOS_STATE.selectedCategory;
 
   return {
     page: Number.isFinite(page) && page > 0 ? page : DEFAULT_FEATURED_VIDEOS_STATE.page,
     sort: SORT_OPTIONS.some((option) => option.value === sort) ? sort : DEFAULT_FEATURED_VIDEOS_STATE.sort,
-    selectedCategory: selectedCategory || DEFAULT_FEATURED_VIDEOS_STATE.selectedCategory,
   };
 }
 
@@ -54,18 +51,9 @@ export function buildFeaturedVideosSearchParams(state: FeaturedVideosState): str
 
   if (state.page > 1) params.set("page", String(state.page));
   if (state.sort !== DEFAULT_FEATURED_VIDEOS_STATE.sort) params.set("sort", state.sort);
-  if (state.selectedCategory !== DEFAULT_FEATURED_VIDEOS_STATE.selectedCategory) {
-    params.set("category", state.selectedCategory);
-  }
 
   return params.toString();
 }
-
-const sortToCategorySort = (s: string): "recent" | "viewed" | "rated" => {
-  if (s === "views") return "viewed";
-  if (s === "rating") return "rated";
-  return "recent";
-};
 
 const sortVideos = (videos: VideoRecord[], sort: string): VideoRecord[] => {
   const copy = [...videos];
@@ -90,14 +78,12 @@ const FeaturedVideos = () => {
   };
   const [page, setPage] = useState(() => parseFeaturedVideosSearchParams(searchParams).page);
   const [sort, setSort] = useState(() => parseFeaturedVideosSearchParams(searchParams).sort);
-  const [selectedCategory, setSelectedCategory] = useState(() => parseFeaturedVideosSearchParams(searchParams).selectedCategory);
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const nextState = parseFeaturedVideosSearchParams(searchParams);
     setPage(nextState.page);
     setSort(nextState.sort);
-    setSelectedCategory(nextState.selectedCategory);
   }, [searchParams]);
 
   // ── Categories
@@ -107,16 +93,9 @@ const FeaturedVideos = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  // ── Videos (All vs by-category)
-  const isAll = selectedCategory === "all";
-
   const { data: videos = [], isLoading, isError, error, isFetching } = useQuery<VideoRecord[]>({
-    queryKey: ["videos", "list", selectedCategory],
-    queryFn: async () => {
-      return isAll
-        ? listVideos("ready")
-        : (await getVideosByCategory(selectedCategory, sortToCategorySort(sort))).videos;
-    },
+    queryKey: ["videos", "list"],
+    queryFn: () => listVideos("ready"),
     placeholderData: (prev) => prev,
   });
 
@@ -129,13 +108,11 @@ const FeaturedVideos = () => {
     const mergedState: FeaturedVideosState = {
       page,
       sort,
-      selectedCategory,
       ...next,
     };
 
     setPage(mergedState.page);
     setSort(mergedState.sort);
-    setSelectedCategory(mergedState.selectedCategory);
     setSearchParams(buildFeaturedVideosSearchParams(mergedState));
   };
 
@@ -148,14 +125,14 @@ const FeaturedVideos = () => {
     updateStateAndUrl({ sort: s, page: 1 });
   };
 
-  const handleCategoryChange = (slug: string) => {
-    updateStateAndUrl({ selectedCategory: slug, page: 1 });
-  };
-
   // Build chip list: synthetic "All" + DB categories
   const allChips = useMemo(() => {
-    const dbChips = (categories ?? []).map((c) => ({ slug: c.slug, name: c.name }));
-    return [{ slug: "all", name: "All" }, ...dbChips];
+    const dbChips = (categories ?? []).map((c) => ({
+      slug: c.slug,
+      name: c.name,
+      href: `/categories/${c.slug}`,
+    }));
+    return [{ slug: "all", name: "All", href: "/videos" }, ...dbChips];
   }, [categories]);
 
   const visibleChips = expanded ? allChips : allChips.slice(0, COLLAPSED_CHIPS_COUNT);
@@ -185,23 +162,11 @@ const FeaturedVideos = () => {
             ? Array.from({ length: 8 }).map((_, i) => (
                 <Skeleton key={i} className="h-9 w-24 rounded-full shrink-0" />
               ))
-            : allChips.map((c) => {
-                const active = selectedCategory === c.slug;
-                return (
-                  <button
-                    key={c.slug}
-                    type="button"
-                    onClick={() => handleCategoryChange(c.slug)}
-                    className={
-                      active
-                        ? "chip shrink-0 bg-foreground text-background border-foreground hover:bg-foreground"
-                        : "chip shrink-0"
-                    }
-                  >
-                    {c.name}
-                  </button>
-                );
-              })}
+            : allChips.map((c) => (
+                <Link key={c.slug} href={c.href} className="chip shrink-0">
+                  {c.name}
+                </Link>
+              ))}
         </div>
       </div>
 
