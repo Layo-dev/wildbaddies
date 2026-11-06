@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import VideoCard from "@/components/VideoCard";
 import VideoCardSkeleton from "@/components/VideoCardSkeleton";
+import Pagination from "@/components/videos/Pagination";
 
 interface Video {
   id: string;
@@ -68,18 +69,6 @@ async function fetchSearch(
   return res.json();
 }
 
-function getPageWindow(current: number, total: number): (number | "…")[] {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-  const pages: (number | "…")[] = [1];
-  if (current > 3) pages.push("…");
-  const start = Math.max(2, current - 1);
-  const end = Math.min(total - 1, current + 1);
-  for (let i = start; i <= end; i++) pages.push(i);
-  if (current < total - 2) pages.push("…");
-  pages.push(total);
-  return pages;
-}
-
 const SearchPage = () => {
   const params = useSearchParams();
   const q = (params.get("q") ?? "").trim();
@@ -93,7 +82,7 @@ const SearchPage = () => {
     setPage(1);
   }, [q]);
 
-  const { data, isLoading, isError, error, isFetching } = useQuery<ListVideosResponse>({
+  const { data, isLoading, isError, error, isFetching, isPlaceholderData } = useQuery<ListVideosResponse>({
     queryKey: ["videos", "search", q, page, limit, sort],
     queryFn: () => fetchSearch(q, page, limit, sort),
     enabled: q.length > 0,
@@ -102,8 +91,14 @@ const SearchPage = () => {
 
   const videos = data?.videos ?? [];
   const pagination = data?.pagination ?? null;
-  const totalPages = pagination?.totalPages ?? 1;
-  const pageWindow = getPageWindow(page, totalPages);
+  const totalPages = Math.max(1, pagination?.totalPages ?? 1);
+  const currentPage = Math.min(page, totalPages);
+
+  useEffect(() => {
+    if (!isPlaceholderData && pagination && pagination.page !== page) {
+      setPage(Math.max(1, Math.min(pagination.page, totalPages)));
+    }
+  }, [isPlaceholderData, page, pagination, totalPages]);
 
   const goTo = (p: number) => {
     if (p < 1 || p > totalPages) return;
@@ -181,7 +176,7 @@ const SearchPage = () => {
           ) : (
             <>
               <div
-                className={`mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 transition-opacity duration-200 ${
+                className={`mt-10 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 transition-opacity duration-200 ${
                   isFetching ? "opacity-50" : "opacity-100"
                 }`}
               >
@@ -212,45 +207,7 @@ const SearchPage = () => {
                 ))}
               </div>
 
-              {pagination && totalPages > 1 && (
-                <div className="mt-10 flex items-center justify-center gap-2">
-                  <button
-                    onClick={() => goTo(page - 1)}
-                    disabled={!pagination.hasPrevPage}
-                    aria-label="Previous page"
-                    className="h-9 w-9 rounded-full grid place-items-center text-white hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition"
-                  >
-                    ‹
-                  </button>
-                  {pageWindow.map((p, i) =>
-                    p === "…" ? (
-                      <span key={`ellipsis-${i}`} className="text-muted-foreground px-1">
-                        …
-                      </span>
-                    ) : (
-                      <button
-                        key={p}
-                        onClick={() => goTo(p as number)}
-                        className={`h-9 w-9 rounded-full grid place-items-center font-bold transition ${
-                          p === page
-                            ? "bg-gradient-purple text-white"
-                            : "text-white hover:text-primary"
-                        }`}
-                      >
-                        {p}
-                      </button>
-                    ),
-                  )}
-                  <button
-                    onClick={() => goTo(page + 1)}
-                    disabled={!pagination.hasNextPage}
-                    aria-label="Next page"
-                    className="h-9 w-9 rounded-full grid place-items-center text-white hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition"
-                  >
-                    ›
-                  </button>
-                </div>
-              )}
+              <Pagination page={currentPage} totalPages={totalPages} onChange={goTo} />
             </>
           )}
         </section>
