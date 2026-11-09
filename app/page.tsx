@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FeaturedVideos from "@/components/FeaturedVideos";
 import PromotedModels from "@/components/PromotedModels";
-import ExoSliderAd from "@/components/ExoSliderAd";
+//import ExoSliderAd from "@/components/ExoSliderAd";
 import { SITE_URL } from "@/lib/seo";
 
 export const revalidate = 120;
@@ -25,7 +25,7 @@ export default function HomePage() {
         <Suspense fallback={<div className="container py-16 text-muted-foreground">Loading videos…</div>}>
           <FeaturedVideos />
         </Suspense>
-        <ExoSliderAd />
+        {/*<ExoSliderAd />*/}
         <PromotedModels />
       </main>
       <Footer />
