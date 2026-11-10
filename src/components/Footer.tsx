@@ -1,3 +1,4 @@
+import AdsterraNativeBanner from "@/components/AdsterraNativeBanner";
 //import BannerAd from "@/components/BannerAd";
 
 const primaryLinks: { label: string; to: string }[] = [
@@ -17,6 +18,9 @@ const secondaryLinks: { label: string; to: string }[] = [
 const Footer = () => {
   return (
     <footer className="border-t border-primary/15 mt-10">
+      <div className="block md:hidden">
+        <AdsterraNativeBanner />
+      </div>
       {/* Sponsored ad */}
       {/*<div className="mt-4 mx-auto flex h-[160px] w-full max-w-sm items-center justify-center rounded-md border border-dashed border-border text-xs uppercase tracking-widest text-muted-foreground">
         {/*Sponsored · Ad 300×250*/}
