@@ -65,9 +65,9 @@ const VideoCard = ({
         <Link href={`/video/${videoSlug}`}>
           <h3 className="text-base font-bold text-white truncate">{title}</h3>
         </Link>
-        <div className="mt-1 flex min-w-0 items-center justify-center gap-3 text-xs text-muted-foreground">
+        <div className="mt-1 flex min-w-0 items-center justify-center gap-3 text-sm text-muted-foreground">
           {models.length > 0 && (
-            <span className="min-w-0 max-w-[40%] truncate font-light text-primary2">
+            <span className="min-w-0 max-w-[40%] truncate text-sm font-normal text-primary2">
               {models.map((model, index) => (
                 <span key={model.id}>
                   {index > 0 && ", "}
