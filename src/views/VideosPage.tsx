@@ -13,6 +13,7 @@ import Pagination from "@/components/videos/Pagination";
 import { listCategories } from "@/lib/categories";
 import { listVideos, getVideosByCategory, type VideoSort, type VideoRecord } from "@/lib/videos";
 import { formatCount } from "@/lib/format";
+import { useVideoModels } from "@/hooks/useVideoModels";
 
 const PAGE_SIZE = 24;
 
@@ -72,6 +73,7 @@ const VideosPage = () => {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const pageItems = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const videoModels = useVideoModels(pageItems);
 
   const goToPage = (p: number) => {
     setSearchParams(p <= 1 ? {} : { page: String(p) });
@@ -173,6 +175,7 @@ const VideosPage = () => {
                       views={formatCount(v.views)}
                       rating={v.rating}
                       thumbnailUrl={v.thumbnail_url}
+                      models={videoModels[v.id]}
                     />
                   ))}
               </div>

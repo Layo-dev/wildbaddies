@@ -169,6 +169,7 @@ const ModelPage = () => {
                       views={formatCount(v.views)}
                       rating={v.rating}
                       thumbnailUrl={v.thumbnail_url}
+                      models={[{ id: model.id, name: model.name, slug: model.slug }]}
                     />
                   ))}
                 </div>

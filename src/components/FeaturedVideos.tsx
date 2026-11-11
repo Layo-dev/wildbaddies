@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { listCategories, type CategoryRecord } from "@/lib/categories";
 import { listVideos, type VideoRecord } from "@/lib/videos";
+import { useVideoModels } from "@/hooks/useVideoModels";
 //import BannerAd from "@/components/BannerAd";
 import AdsterraNativeBanner from "@/components/AdsterraNativeBanner";
 import AdsterraNativeBanner2 from "@/components/AdsterraNativeBanner2";
@@ -103,6 +104,7 @@ const FeaturedVideos = () => {
   const totalPages = Math.max(1, Math.ceil(sortedVideos.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const pageVideos = sortedVideos.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const videoModels = useVideoModels(pageVideos);
 
   const updateStateAndUrl = (next: Partial<FeaturedVideosState>) => {
     const mergedState: FeaturedVideosState = {
@@ -222,6 +224,7 @@ const FeaturedVideos = () => {
               views={video.views}
               rating={video.rating}
               thumbnailUrl={video.thumbnail_url}
+              models={videoModels[video.id]}
             />
 
             {(index + 1) % 8 === 0 && (

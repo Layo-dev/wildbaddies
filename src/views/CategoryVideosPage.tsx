@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronDown } from "lucide-react";
 import { getVideosByCategory, type VideoSort, type CategoryVideosResult } from "@/lib/videos";
 import { formatCount } from "@/lib/format";
+import { useVideoModels } from "@/hooks/useVideoModels";
 
 const SORTS: Array<{ id: VideoSort; label: string }> = [
   { id: "recent", label: "MOST RECENT" },
@@ -47,6 +48,7 @@ const CategoryVideosPage = () => {
 
   const name = data?.category?.name ?? slug.replace(/-/g, " ");
   const videos = data?.videos ?? [];
+  const videoModels = useVideoModels(videos);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -105,6 +107,7 @@ const CategoryVideosPage = () => {
                   views={formatCount(v.views)}
                   rating={v.rating}
                   thumbnailUrl={v.thumbnail_url}
+                  models={videoModels[v.id]}
                 />
               ))}
           </div>

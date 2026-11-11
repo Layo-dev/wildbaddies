@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import VideoCard from "@/components/VideoCard";
 import VideoCardSkeleton from "@/components/VideoCardSkeleton";
 import Pagination from "@/components/videos/Pagination";
+import { useVideoModels } from "@/hooks/useVideoModels";
 
 interface Video {
   id: string;
@@ -90,6 +91,7 @@ const SearchPage = () => {
   });
 
   const videos = data?.videos ?? [];
+  const videoModels = useVideoModels(videos);
   const pagination = data?.pagination ?? null;
   const totalPages = Math.max(1, pagination?.totalPages ?? 1);
   const currentPage = Math.min(page, totalPages);
@@ -203,6 +205,7 @@ const SearchPage = () => {
                     views={video.views}
                     rating={video.rating}
                     thumbnailUrl={video.thumbnail_url}
+                    models={videoModels[video.id]}
                   />
                 ))}
               </div>

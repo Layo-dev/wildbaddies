@@ -2,6 +2,7 @@
 
 import VideoCard from "@/components/VideoCard";
 import type { VideoRecord } from "@/lib/videos";
+import { useVideoModels } from "@/hooks/useVideoModels";
 //import BannerAd from "@/components/BannerAd";
 import AdsterraNativeBanner from "@/components/AdsterraNativeBanner";
 import AdsterraNativeBanner2 from "@/components/AdsterraNativeBanner2";
@@ -10,6 +11,8 @@ interface SimilarVideosProps {
 }
 
 const SimilarVideos = ({ videos }: SimilarVideosProps) => {
+  const videoModels = useVideoModels(videos);
+
   return (
     <section className="container py-10 sm:py-16">
         <AdsterraNativeBanner2/>
@@ -30,6 +33,7 @@ const SimilarVideos = ({ videos }: SimilarVideosProps) => {
             views={video.views}
             rating={video.rating}
             thumbnailUrl={video.thumbnail_url}
+            models={videoModels[video.id]}
           />
         ))}
       </div>

@@ -5,6 +5,7 @@ import { ChevronDown } from "lucide-react";
 import VideoCard from "@/components/VideoCard";
 import { formatCount } from "@/lib/format";
 import type { VideoRecord, VideoSort } from "@/lib/videos";
+import { useVideoModels } from "@/hooks/useVideoModels";
 
 const SORTS: Array<{ id: VideoSort; label: string }> = [
   { id: "recent", label: "MOST RECENT" },
@@ -29,6 +30,7 @@ interface Props {
 export default function SortableVideoGrid({ videos, emptyMessage = "No videos yet." }: Props) {
   const [sort, setSort] = useState<VideoSort>("recent");
   const sorted = useMemo(() => sortVideos(videos, sort), [videos, sort]);
+  const videoModels = useVideoModels(sorted);
 
   return (
     <>
@@ -65,6 +67,7 @@ export default function SortableVideoGrid({ videos, emptyMessage = "No videos ye
             views={formatCount(v.views)}
             rating={v.rating}
             thumbnailUrl={v.thumbnail_url}
+            models={videoModels[v.id]}
           />
         ))}
       </div>

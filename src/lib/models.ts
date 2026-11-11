@@ -192,6 +192,40 @@ export const getVideoModels = async (videoId: string): Promise<ModelRecord[]> =>
     .filter((m) => m.is_active);
 };
 
+export const getVideoModelsByVideoIds = async (
+  videoIds: string[],
+): Promise<Record<string, ModelRecord[]>> => {
+  if (videoIds.length === 0) return {};
+
+  const client = ensureSupabase();
+  const { data, error } = await client
+    .from("video_models")
+    .select("video_id, models:model_id ( * )")
+    .in("video_id", videoIds);
+
+  if (error) throw new Error(error.message);
+
+  const modelsByVideoId: Record<string, ModelRecord[]> = {};
+  const rows = (data ?? []) as Array<{
+    video_id: string;
+    models: Record<string, unknown> | Record<string, unknown>[] | null;
+  }>;
+
+  for (const row of rows) {
+    const linkedModels = row.models
+      ? Array.isArray(row.models)
+        ? row.models
+        : [row.models]
+      : [];
+    const models = linkedModels.map((model) => mapModelRow(model)).filter((model) => model.is_active);
+    if (models.length > 0) {
+      modelsByVideoId[row.video_id] = [...(modelsByVideoId[row.video_id] ?? []), ...models];
+    }
+  }
+
+  return modelsByVideoId;
+};
+
 export const getModelBySlug = async (slug: string): Promise<ModelBySlugResult> => {
   const client = ensureSupabase();
 
