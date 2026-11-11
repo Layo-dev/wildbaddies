@@ -10,8 +10,8 @@ import AdsterraNativeBanner from "../AdsterraNativeBanner";
 const VideoComments = () => {
   const [comment, setComment] = useState("");
   const [name, setName] = useState("");
-  //const [code, setCode] = useState("");
-  //const captcha = "8K3Q";
+  const [code, setCode] = useState("");
+  const captcha = "8K3Q";
 
   return (
     <section className="mt-12 border-t border-border pt-8">
