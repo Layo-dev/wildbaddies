@@ -12,6 +12,7 @@ export const revalidate = 120;
 
 interface Props {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ page?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -25,11 +26,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function CategoryVideosRoute({ params }: Props) {
-  const { slug } = await params;
+export default async function CategoryVideosRoute({ params, searchParams }: Props) {
+  const [{ slug }, { page: pageParam }] = await Promise.all([params, searchParams]);
   const data = await getVideosByCategory(slug, "recent");
   if (!data.category) notFound();
   const name = data.category.name;
+  const page = pageParam && /^\d+$/.test(pageParam) ? Number(pageParam) : 1;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -49,6 +51,8 @@ export default async function CategoryVideosRoute({ params }: Props) {
           <SortableVideoGrid
             videos={data.videos}
             emptyMessage="No videos in this category yet."
+            page={page}
+            paginationBase={`/categories/${slug}`}
           />
         </section>
       </main>
