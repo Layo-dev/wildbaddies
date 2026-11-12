@@ -1,11 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import VideoCard from "@/components/VideoCard";
 import { formatCount } from "@/lib/format";
 import type { VideoRecord, VideoSort } from "@/lib/videos";
 import { useVideoModels } from "@/hooks/useVideoModels";
+import Pagination from "@/components/videos/Pagination";
+
+const PAGE_SIZE = 24;
 
 const SORTS: Array<{ id: VideoSort; label: string }> = [
   { id: "recent", label: "MOST RECENT" },
@@ -25,12 +29,32 @@ const sortVideos = (videos: VideoRecord[], sort: VideoSort): VideoRecord[] => {
 interface Props {
   videos: VideoRecord[];
   emptyMessage?: string;
+  page?: number;
+  paginationBase?: string;
 }
 
-export default function SortableVideoGrid({ videos, emptyMessage = "No videos yet." }: Props) {
+export default function SortableVideoGrid({
+  videos,
+  emptyMessage = "No videos yet.",
+  page = 1,
+  paginationBase,
+}: Props) {
+  const router = useRouter();
   const [sort, setSort] = useState<VideoSort>("recent");
   const sorted = useMemo(() => sortVideos(videos, sort), [videos, sort]);
-  const videoModels = useVideoModels(sorted);
+  const totalPages = paginationBase ? Math.ceil(sorted.length / PAGE_SIZE) : 1;
+  const currentPage = Math.min(Math.max(1, page), Math.max(1, totalPages));
+  const pageVideos = paginationBase
+    ? sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+    : sorted;
+  const videoModels = useVideoModels(pageVideos);
+
+  const goToPage = (nextPage: number) => {
+    if (!paginationBase) return;
+    const url = nextPage === 1 ? paginationBase : `${paginationBase}?page=${nextPage}`;
+    router.push(url);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <>
@@ -58,7 +82,7 @@ export default function SortableVideoGrid({ videos, emptyMessage = "No videos ye
       </div>
 
       <div className="mt-10 -mx-8 sm:mx-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
-        {sorted.map((v) => (
+        {pageVideos.map((v) => (
           <VideoCard
             key={v.id}
             slug={v.slug}
@@ -74,6 +98,10 @@ export default function SortableVideoGrid({ videos, emptyMessage = "No videos ye
 
       {sorted.length === 0 && (
         <p className="mt-10 text-center text-muted-foreground">{emptyMessage}</p>
+      )}
+
+      {paginationBase && (
+        <Pagination page={currentPage} totalPages={totalPages} onChange={goToPage} />
       )}
     </>
   );
