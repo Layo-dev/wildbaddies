@@ -3,10 +3,16 @@ import { ChevronDown, Search as SearchIcon, BadgeCheck, Star } from "lucide-reac
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ModelCard from "@/components/models/ModelCard";
+import ModelsPagination from "@/components/models/ModelsPagination";
 import { listModels } from "@/lib/models";
 import { SITE_URL } from "@/lib/seo";
 
 export const revalidate = 120;
+const PAGE_SIZE = 30;
+
+interface Props {
+  searchParams: Promise<{ page?: string }>;
+}
 
 export const metadata: Metadata = {
   title: "Models",
@@ -20,7 +26,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function ModelsRoute() {
+export default async function ModelsRoute({ searchParams }: Props) {
+  const { page: pageParam } = await searchParams;
   let models = [];
   let error: string | null = null;
   try {
@@ -28,6 +35,11 @@ export default async function ModelsRoute() {
   } catch (e) {
     error = e instanceof Error ? e.message : "Failed to load models.";
   }
+
+  const requestedPage = pageParam && /^\d+$/.test(pageParam) ? Number(pageParam) : 1;
+  const totalPages = Math.ceil(models.length / PAGE_SIZE);
+  const currentPage = Math.min(Math.max(1, requestedPage), Math.max(1, totalPages));
+  const pageModels = models.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -49,12 +61,12 @@ export default async function ModelsRoute() {
             </div>
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-bold uppercase tracking-wide">
               <span className="text-primary">All Models</span>
-              <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+              {/*<span className="inline-flex items-center gap-1.5 text-muted-foreground">
                 <BadgeCheck className="h-4 w-4" /> Verified
               </span>
               <span className="inline-flex items-center gap-1.5 text-muted-foreground">
                 <Star className="h-4 w-4" /> Collab
-              </span>
+              </span>*/}
             </div>
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-bold uppercase tracking-wide text-primary2">
               <span className="inline-flex items-center gap-1">
@@ -66,10 +78,11 @@ export default async function ModelsRoute() {
             </div>
           </div>
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8">
-            {models.map((m, i) => (
-              <ModelCard key={m.id} model={m} rank={i + 1} />
+            {pageModels.map((m, i) => (
+              <ModelCard key={m.id} model={m} rank={(currentPage - 1) * PAGE_SIZE + i + 1} />
             ))}
           </div>
+          {!error && <ModelsPagination page={currentPage} totalPages={totalPages} />}
           {error && <p className="mt-10 text-center text-sm text-destructive">{error}</p>}
           {!error && models.length === 0 && (
             <p className="mt-10 text-center text-muted-foreground">No models yet.</p>
