@@ -6,7 +6,7 @@ import { formatCount } from "@/lib/format";
 
 interface Props {
   model: ModelRecord;
-  rank: number;
+  rank?: number; // optional — omit in search results
 }
 
 const ModelCard = ({ model, rank }: Props) => (
@@ -27,7 +27,10 @@ const ModelCard = ({ model, rank }: Props) => (
     </div>
     <div className="text-center">
       <h3 className="truncate text-sm font-bold text-foreground transition-colors group-hover:text-primary2">
-        <span className="text-primary">#{rank}</span> {model.name}
+        {rank !== undefined && (
+          <span className="text-primary">#{rank} </span>
+        )}
+        {model.name}
       </h3>
       <div className="mt-0.5 flex items-center justify-center gap-3 text-sm text-muted-foreground">
         <span>{formatCount(model.video_count ?? 0)} videos</span>

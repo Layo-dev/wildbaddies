@@ -8,7 +8,12 @@ import Footer from "@/components/Footer";
 import VideoCard from "@/components/VideoCard";
 import VideoCardSkeleton from "@/components/VideoCardSkeleton";
 import Pagination from "@/components/videos/Pagination";
+import ModelCard from "@/components/models/ModelCard";
+import AdsterraNativeBanner from "@/components/AdsterraNativeBanner";
+import AdsterraNativeBanner2 from "@/components/AdsterraNativeBanner2"
+import { Skeleton } from "@/components/ui/skeleton";
 import { useVideoModels } from "@/hooks/useVideoModels";
+import type { ModelRecord } from "@/lib/models";
 
 interface Video {
   id: string;
@@ -22,7 +27,7 @@ interface Video {
   created_at: string;
 }
 
-interface Pagination {
+interface PaginationMeta {
   page: number;
   limit: number;
   totalCount: number;
@@ -33,35 +38,37 @@ interface Pagination {
 
 interface ListVideosResponse {
   videos: Video[];
-  pagination: Pagination;
+  pagination: PaginationMeta;
+}
+
+interface SearchModelsResponse {
+  models: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    thumbnail_url: string | null;
+    videos_count: number;
+  }>;
 }
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY;
+const PAGE_SIZE = 30;
 
-const SHOW_OPTIONS = [30, 60, 90, 120];
-const SORT_OPTIONS = [
-  { value: "newest", label: "Newest" },
-  { value: "views", label: "Most Viewed" },
-  { value: "rating", label: "Top Rated" },
-];
-
-async function fetchSearch(
+async function fetchSearchVideos(
   q: string,
   page: number,
-  limit: number,
-  sort: string,
 ): Promise<ListVideosResponse> {
   const params = new URLSearchParams({
     q,
     page: String(page),
-    limit: String(limit),
-    sort,
+    limit: String(PAGE_SIZE),
+    sort: "newest",
     status: "ready",
   });
   const res = await fetch(`${SUPABASE_URL}/functions/v1/list-videos?${params}`, {
     headers: {
-      apikey: SUPABASE_ANON_KEY,
+      apikey: SUPABASE_ANON_KEY!,
       Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
       "Content-Type": "application/json",
     },
@@ -70,31 +77,79 @@ async function fetchSearch(
   return res.json();
 }
 
+async function fetchSearchModels(q: string): Promise<SearchModelsResponse> {
+  const params = new URLSearchParams({ q, limit: "6" });
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/search-models?${params}`, {
+    headers: {
+      apikey: SUPABASE_ANON_KEY!,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      "Content-Type": "application/json",
+    },
+  });
+  if (!res.ok) throw new Error(`Model search failed: ${res.statusText}`);
+  return res.json();
+}
+
 const SearchPage = () => {
-  const params = useSearchParams();
-  const q = (params.get("q") ?? "").trim();
+  const params      = useSearchParams();
+  const q           = (params.get("q") ?? "").trim();
 
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(30);
-  const [sort, setSort] = useState("newest");
 
   // Reset pagination on new query
-  useEffect(() => {
-    setPage(1);
-  }, [q]);
+  useEffect(() => { setPage(1); }, [q]);
 
-  const { data, isLoading, isError, error, isFetching, isPlaceholderData } = useQuery<ListVideosResponse>({
-    queryKey: ["videos", "search", q, page, limit, sort],
-    queryFn: () => fetchSearch(q, page, limit, sort),
-    enabled: q.length > 0,
+  // ── Videos query
+  const {
+    data: videoData,
+    isLoading: videosLoading,
+    isError: videosError,
+    error: videosErr,
+    isFetching,
+    isPlaceholderData,
+  } = useQuery<ListVideosResponse>({
+    queryKey: ["videos", "search", q, page],
+    queryFn:  () => fetchSearchVideos(q, page),
+    enabled:  q.length > 0,
     placeholderData: (prev) => prev,
   });
 
-  const videos = data?.videos ?? [];
+  // ── Models query (fires in parallel with videos)
+  const {
+    data: modelData,
+    isLoading: modelsLoading,
+  } = useQuery<SearchModelsResponse>({
+    queryKey: ["models", "search", q],
+    queryFn:  () => fetchSearchModels(q),
+    enabled:  q.length > 0,
+    staleTime: 30_000,
+  });
+
+  const videos     = videoData?.videos     ?? [];
   const videoModels = useVideoModels(videos);
-  const pagination = data?.pagination ?? null;
-  const totalPages = Math.max(1, pagination?.totalPages ?? 1);
+  const pagination  = videoData?.pagination ?? null;
+  const totalPages  = Math.max(1, pagination?.totalPages ?? 1);
   const currentPage = Math.min(page, totalPages);
+
+  // Map search-models response to ModelRecord shape (only fields ModelCard needs)
+  const models: ModelRecord[] = (modelData?.models ?? []).map((m) => ({
+    id:                m.id,
+    name:              m.name,
+    slug:              m.slug,
+    thumbnail_url:     m.thumbnail_url,
+    bio:               null,
+    is_active:         true,
+    created_at:        null,
+    video_count:       m.videos_count,
+    total_views:       null,
+    subscribers_count: null,
+    profile_views:     null,
+    instagram_url:     null,
+    twitter_url:       null,
+    tiktok_url:        null,
+    onlyfans_url:      null,
+    fansly_url:        null,
+  }));
 
   useEffect(() => {
     if (!isPlaceholderData && pagination && pagination.page !== page) {
@@ -113,6 +168,15 @@ const SearchPage = () => {
       <Header />
       <main>
         <section className="container py-10 sm:py-16">
+          {/* Ad Banners */}
+          <div className="hidden md:block mb-4">
+            <AdsterraNativeBanner2 />
+          </div>
+          <div className="block md:hidden">
+            <AdsterraNativeBanner />
+          </div>
+
+          {/* Heading */}
           <h1 className="text-center text-4xl sm:text-6xl font-bold text-white tracking-tight">
             {q ? <>SEARCH RESULTS</> : <>SEARCH</>}
           </h1>
@@ -132,85 +196,80 @@ const SearchPage = () => {
             </p>
           )}
 
-          {q && (
-            <div className="mt-8 flex flex-wrap items-center justify-between gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-3">
-                <span>Show:</span>
-                {SHOW_OPTIONS.map((n) => (
-                  <button
-                    key={n}
-                    onClick={() => {
-                      setLimit(n);
-                      setPage(1);
-                    }}
-                    className={`font-bold transition-colors ${
-                      limit === n ? "text-primary" : "hover:text-primary"
-                    }`}
-                  >
-                    {n}
-                  </button>
-                ))}
-              </div>
-              <div className="flex items-center gap-3">
-                <span>Sort:</span>
-                {SORT_OPTIONS.map((o) => (
-                  <button
-                    key={o.value}
-                    onClick={() => {
-                      setSort(o.value);
-                      setPage(1);
-                    }}
-                    className={`font-bold transition-colors ${
-                      sort === o.value ? "text-primary" : "hover:text-primary"
-                    }`}
-                  >
-                    {o.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           {!q ? (
             <p className="mt-12 text-center text-muted-foreground">
               Type something in the search bar to find videos.
             </p>
           ) : (
             <>
-              <div
-                className={`mt-10 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 transition-opacity duration-200 ${
-                  isFetching ? "opacity-50" : "opacity-100"
-                }`}
-              >
-                {isLoading &&
-                  Array.from({ length: Math.min(limit, 12) }).map((_, i) => (
+              {/* ── MODELS SECTION ───────────────────────────── */}
+              {(modelsLoading || models.length > 0) && (
+                <div className="mt-12">
+                  <h2 className="text-xl font-bold text-white mb-5">
+                    Model Search
+                    {!modelsLoading && models.length > 0 && (
+                      <span className="ml-2 text-muted-foreground font-normal text-sm">
+                        ({models.length})
+                      </span>
+                    )}
+                  </h2>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                    {modelsLoading
+                      ? Array.from({ length: 6 }).map((_, i) => (
+                          <div key={i} className="flex flex-col gap-2">
+                            <Skeleton className="aspect-[3/4] w-full rounded-xl" />
+                            <Skeleton className="h-3 w-2/3 mx-auto" />
+                          </div>
+                        ))
+                      : models.map((model) => (
+                          <ModelCard key={model.id} model={model} />
+                        ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ── VIDEOS SECTION ───────────────────────────── */}
+              <div className="mt-12">
+                <h2 className="text-xl font-bold text-white mb-5">
+                  Video Search
+                  {pagination && (
+                    <span className="ml-2 text-muted-foreground font-normal text-sm">
+                      ({pagination.totalCount.toLocaleString()})
+                    </span>
+                  )}
+                </h2>
+
+                <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 transition-opacity duration-200 ${isFetching ? "opacity-50" : "opacity-100"}`}>
+                  {videosLoading && Array.from({ length: Math.min(PAGE_SIZE, 12) }).map((_, i) => (
                     <VideoCardSkeleton key={i} />
                   ))}
-                {isError && (
-                  <p className="text-destructive col-span-full">
-                    Could not load search: {(error as Error).message}
-                  </p>
-                )}
-                {!isLoading && !isError && videos.length === 0 && (
-                  <p className="text-muted-foreground col-span-full text-center">
-                    No videos match "{q}".
-                  </p>
-                )}
-                {videos.map((video) => (
-                  <VideoCard
-                    key={video.id}
-                    slug={video.slug}
-                    title={video.title}
-                    durationSeconds={video.duration_seconds}
-                    views={video.views}
-                    rating={video.rating}
-                    thumbnailUrl={video.thumbnail_url}
-                    models={videoModels[video.id]}
-                  />
-                ))}
-              </div>
+                  {videosError && (
+                    <p className="text-destructive col-span-full">
+                      Could not load search: {(videosErr as Error).message}
+                    </p>
+                  )}
+                  {!videosLoading && !videosError && videos.length === 0 && (
+                    <p className="text-muted-foreground col-span-full text-center">
+                      No videos match "{q}".
+                    </p>
+                  )}
+                  {videos.map((video) => (
+                    <VideoCard
+                      key={video.id}
+                      slug={video.slug}
+                      title={video.title}
+                      durationSeconds={video.duration_seconds}
+                      views={video.views}
+                      rating={video.rating}
+                      thumbnailUrl={video.thumbnail_url}
+                      models={videoModels[video.id]}
+                    />
+                  ))}
+                </div>
 
-              <Pagination page={currentPage} totalPages={totalPages} onChange={goTo} />
+                <Pagination page={currentPage} totalPages={totalPages} onChange={goTo} />
+              </div>
             </>
           )}
         </section>
