@@ -10,7 +10,7 @@ import VideoCardSkeleton from "@/components/VideoCardSkeleton";
 import Pagination from "@/components/videos/Pagination";
 import ModelCard from "@/components/models/ModelCard";
 import AdsterraNativeBanner from "@/components/AdsterraNativeBanner";
-import AdsterraNativeBanner2 from "@/components/AdsterraNativeBanner2"
+import AdsterraNativeBanner2 from "@/components/AdsterraNativeBanner2";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useVideoModels } from "@/hooks/useVideoModels";
 import type { ModelRecord } from "@/lib/models";
